@@ -28,6 +28,7 @@
 #
 
 ADD_SUBDIRECTORY(Utils)
+ADD_SUBDIRECTORY(Tools)
 
 ########################################################################
 # Configure test support
