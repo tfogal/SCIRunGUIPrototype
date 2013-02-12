@@ -98,3 +98,42 @@ TEST(CommandLineSpecTest, BoostExampleCode)
     EXPECT_THROW(readCommandLine(argc, argv, desc), std::exception);
   }
 }
+
+TEST(CommandLineSpecTest, program_optionsFailure_multiple_occurrences)
+{
+  po::options_description desc("Allowed options");
+  desc.add_options()
+  ("help,h", "produce help message")
+  ;
+  po::positional_options_description positional;
+
+  const char* argv[] = { "dummy.exe", "--help", "-h" };
+  int argc = sizeof(argv)/sizeof(char*);
+
+  po::variables_map vm;
+  // test configuration used in program
+  EXPECT_THROW(po::store(po::command_line_parser(argc, argv).options(desc).
+                         positional(positional).allow_unregistered().run(),
+                         vm), po::multiple_occurrences);
+  po::notify(vm);
+}
+
+TEST(CommandLineSpecTest, program_optionsFailure_unknown_option)
+{
+  po::options_description desc("Allowed options");
+  desc.add_options()
+  ("help,h", "produce help message")
+  ;
+  po::positional_options_description positional;
+  
+  const char* argv[] = { "dummy.exe", "--help", "--notaflag" };
+  int argc = sizeof(argv)/sizeof(char*);
+  
+  po::variables_map vm;
+  // test configuration used in program
+  // po::unknown_options shouldn't be thrown with allow_unregistered()
+  EXPECT_NO_THROW(po::store(po::command_line_parser(argc, argv).options(desc).
+                         positional(positional).allow_unregistered().run(),
+                         vm));
+  po::notify(vm);
+}
