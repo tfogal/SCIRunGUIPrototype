@@ -329,6 +329,9 @@
           <property name="text">
            <string/>
           </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+          </property>
          </item>
          <item>
           <property name="text">
@@ -364,6 +367,9 @@
           <property name="text">
            <string/>
           </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+          </property>
          </item>
          <item>
           <property name="text">
@@ -384,6 +390,9 @@
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
           </property>
          </item>
         </item>
@@ -639,11 +648,11 @@
            <x>10</x>
            <y>10</y>
            <width>601</width>
-           <height>111</height>
+           <height>141</height>
           </rect>
          </property>
          <property name="title">
-          <string>Layout Options</string>
+          <string>Display Options</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -654,7 +663,7 @@
             <x>20</x>
             <y>20</y>
             <width>521</width>
-            <height>71</height>
+            <height>111</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -737,6 +746,31 @@
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="backgroundColorLabel_">
+               <property name="text">
+                <string>Background color:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="chooseBackgroundColorButton_">
+               <property name="text">
+                <string>Choose Color...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="resetBackgroundColorButton_">
+               <property name="text">
+                <string>Reset</string>
                </property>
               </widget>
              </item>

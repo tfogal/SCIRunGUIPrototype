@@ -3,10 +3,10 @@
 
    The MIT License
 
-   Copyright (c) 2012 Scientific Computing and Imaging Institute,
+   Copyright (c) 2009 Scientific Computing and Imaging Institute,
    University of Utah.
 
-   License for the specific language governing rights and limitations under
+   
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -26,24 +26,38 @@
    DEALINGS IN THE SOFTWARE.
 */
 
-#include <Dataflow/Network/NetworkSettings.h>
 
-using namespace SCIRun::Dataflow::Networks;
+#ifndef CORE_DATATYPES_FIELDRNG_H
+#define CORE_DATATYPES_FIELDRNG_H 1
 
-std::string NetworkGlobalSettings::value(const std::string& key) const
-{
-  auto iter = settings_.find(key);
-  return iter != settings_.end() ? iter->second : "";
-}
+#include <Core/Datatypes/Mesh/Share.h>
 
-void NetworkGlobalSettings::setValue(const std::string& key, const std::string& value)
-{
-  settings_[key] = value;
-}
+namespace SCIRun {
+  namespace Core {
+    namespace Datatypes {
 
-NetworkPathSettings::NetworkPathSettings(const NetworkGlobalSettings& globalSettings) : settings_(globalSettings) {}
+class SCISHARE FieldRNG {
+  int d[16], n[16];
+  int stab[2][32];
+  int point;
+  int d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12;
+  int a1,b1;
+  int a2,b2;
+  int a3,b3;
+  int a4,b4;
+  int a5,b5;
+  int a6,b6;
+  int a7,b7;
+  int a8,b8;
+  int a9,b9;
+  int a10,b10;
+  int a11,b11;
+  int a12,b12;
+public:
+  FieldRNG( int seed = 0 );
+  double operator()();
+};
 
-boost::filesystem::path NetworkPathSettings::regressionTestDataDirectory() const
-{
-  return settings_.value("regressionTestDataDir");
-}
+}}}
+
+#endif
