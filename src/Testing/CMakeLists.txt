@@ -27,6 +27,8 @@
 #  DEALINGS IN THE SOFTWARE.
 #
 
+PROJECT(SCIRUN_TESTING)
+
 ADD_SUBDIRECTORY(Utils)
 
 ########################################################################
@@ -38,6 +40,43 @@ IF(RUN_UNIT_TESTS)
   ENDFOREACH(test ${UNIT_TEST_LIST})
 ENDIF()
 
+########################################################################
+# Different testing categories
+
+#OPTION(RUN_MODULE_TESTS "Run individual module unit tests (X must be running)" ON)
+#OPTION(RUN_SAMPLE_TESTS "Run the regression test networks (X must be running)" ON)
+#OPTION(RUN_OPTIONAL_TESTS "Run the optional test networks (X must be running)" OFF)
+#OPTION(RUN_TOOLKITS "Run toolkit networks (X must be running)" ON)
+
+OPTION(RUN_UNIT_TESTS "Run gtest unit tests" ON)
+OPTION(RUN_BASIC_REGRESSION_TESTS "Run basic regression tests" ON)
+
+# Directory of baseline images
+SET(TESTING_OUTPUT_ROOT "${SCIRUN_TESTING_BINARY_DIR}/../../testing" CACHE PATH "Directory root for testing output files.")
+MARK_AS_ADVANCED(TESTING_OUTPUT_ROOT)
+
+MESSAGE(STATUS "Testing output will be written to ${TESTING_OUTPUT_ROOT}.")
+
+SET(BASELINE_IMAGES_DIR "${TESTING_OUTPUT_ROOT}/BaseLineImages" CACHE INTERNAL "Path to baseline images" FORCE)
+SET(TEST_IMAGES_DIR "${TESTING_OUTPUT_ROOT}/TestImages" CACHE INTERNAL "Path to test images" FORCE)
+SET(DIFF_IMAGES_DIR "${TESTING_OUTPUT_ROOT}/DiffImages" CACHE INTERNAL "Path to difference images" FORCE)
+SET(TEST_FILES_DIR "${TESTING_OUTPUT_ROOT}/TestFiles" CACHE INTERNAL "Path to test files other than images (text, fields, matrices etc." FORCE)
+
+IF(NOT IS_DIRECTORY BASELINE_IMAGES_DIR)
+  FILE(MAKE_DIRECTORY ${BASELINE_IMAGES_DIR})
+ENDIF()
+
+IF(NOT IS_DIRECTORY TEST_IMAGES_DIR)
+ FILE(MAKE_DIRECTORY ${TEST_IMAGES_DIR})
+ENDIF()
+
+IF(NOT IS_DIRECTORY DIFF_IMAGES_DIR)
+ FILE(MAKE_DIRECTORY ${DIFF_IMAGES_DIR})
+ENDIF()
+
+IF(NOT IS_DIRECTORY TEST_FILES_DIR)
+ FILE(MAKE_DIRECTORY ${TEST_FILES_DIR})
+ENDIF()
 
 IF(RUN_BASIC_REGRESSION_TESTS)
 
