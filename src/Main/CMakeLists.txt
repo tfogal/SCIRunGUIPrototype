@@ -31,14 +31,6 @@ SET(SCIRunGUIPrototype_SOURCES
 )
 
 IF(APPLE)
-  # TODO: temporary - until testing can be configured with app bundle
-  ADD_EXECUTABLE(${TEST_APPLICATION_NAME}
-    ${SCIRunGUIPrototype_SOURCES}
-  )
-  TARGET_LINK_LIBRARIES(${TEST_APPLICATION_NAME}
-    Interface_Application
-  )
-
   LIST(APPEND SCIRunGUIPrototype_SOURCES "${APPLICATION_OSX_ICON_FULL_PATH}")
   SET_SOURCE_FILES_PROPERTIES(${APPLICATION_OSX_ICON_FULL_PATH}
                               PROPERTIES
