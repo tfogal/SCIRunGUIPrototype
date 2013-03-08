@@ -28,11 +28,12 @@
 #
 
 SET(Module_Tools_HEADERS
-  #MatrixTestUtilities.h
+  ModuleCounter.h
 )
 
 SET(Module_Tools_SRCS
   ModuleUsageStatistics.cc
+  ModuleCounter.cpp
 )
 
 SCIRUN_ADD_UNIT_TEST(Module_Tools

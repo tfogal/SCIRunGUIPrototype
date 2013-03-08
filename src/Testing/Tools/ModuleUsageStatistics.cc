@@ -28,14 +28,23 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <Testing/Tools/ModuleCounter.h>
 
 // Step 1: single file data collection
 // step 2: directory traversal, applying step 1 and collecting results
 // step 3: data analysis
 
 
-TEST(ModuleUsageStatistics, Run)
+TEST(ModuleCounterStatistics, PrintNetworkFiles)
 {
-  FAIL();
-}
+std::string pathStr = "/Users/ajwaller/Development/scirun4/trunk/SCIRun/src/nets";  // hard coded path in anyway
+SCI_Module_Counter::ModuleCounter tmp;
 
+std::vector<std::string> filePaths = tmp.RetrieveFilePaths(pathStr);
+
+for(int i=0; i<filePaths.size(); ++i)
+{
+  std::cout << filePaths.at(i) << std::endl;
+  }
+
+}
