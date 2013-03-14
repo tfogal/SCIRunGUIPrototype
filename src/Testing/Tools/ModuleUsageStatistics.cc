@@ -37,7 +37,7 @@
 
 TEST(ModuleCounterStatistics, PrintNetworkFiles)
 {
-std::string pathStr = "/Users/ajwaller/Development/scirun4/trunk/SCIRun/src/nets";  // hard coded path in anyway
+std::string pathStr = "/Users/ajwaller/Development/scirun4/trunk/SCIRun/src/nets";  // add option later for user specified path
 SCI_Module_Counter::ModuleCounter tmp;
 
 std::vector<std::string> filePaths = tmp.RetrieveFilePaths(pathStr);
