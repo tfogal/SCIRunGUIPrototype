@@ -38,14 +38,15 @@ IF(APPLE)
   SET(MACOSX_BUNDLE_ICON_FILE "${APPLICATION_OSX_ICON}" )
 
   ADD_EXECUTABLE(${APPLICATION_NAME} MACOSX_BUNDLE ${SCIRunGUIPrototype_SOURCES})
+  # TODO: query CMake for this?
+  SET(BUNDLE_EXECUTABLE_NAME "${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}" CACHE INTERNAL "Executable in OS X bundle")
 
 ELSE()
-# TODO: ELSE IF WIN32 with NSIS settings, generic Unix build
+  # TODO: ELSE IF WIN32 with NSIS settings, generic Unix build
 
-ADD_EXECUTABLE(${APPLICATION_NAME}
-  ${SCIRunGUIPrototype_SOURCES}
-)
-
+  ADD_EXECUTABLE(${APPLICATION_NAME}
+    ${SCIRunGUIPrototype_SOURCES}
+  )
 ENDIF()
 
 TARGET_LINK_LIBRARIES(${APPLICATION_NAME}
@@ -57,7 +58,7 @@ SET(BUILD_BUNDLE TRUE)
 IF(APPLE)
   IF(${AWK} MATCHES "NOTFOUND" OR ${SED} MATCHES "NOTFOUND")
     SET(BUILD_BUNDLE FALSE)
-    MESSAGE(WARNING "Awk and sed are required to build the SCIRun app bundle. Please ensure that both are installed and in your path.")
+    MESSAGE(FATAL_ERROR "Awk and sed are required to build the SCIRun OS X app bundle. Please ensure that both are installed and in your path.")
   ENDIF()
 ENDIF()
 

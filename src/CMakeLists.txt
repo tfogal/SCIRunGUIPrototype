@@ -135,6 +135,9 @@ IF(APPLE)
   SET(CMAKE_CXX_FLAGS_DEBUG "-Wshorten-64-to-32 ${CMAKE_CXX_FLAGS_DEBUG}")
 
   ADD_DEFINITIONS(-DGTEST_USE_OWN_TR1_TUPLE=1)
+
+MESSAGE(STATUS "CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
+
 ENDIF()
 
 
@@ -351,12 +354,25 @@ SET(QT_USE_QTOPENGL TRUE)
 ########################################################################
 # Macros
 
+# TODO: move to local CMake dir
+
 MACRO(SCIRUN_ADD_UNIT_TEST test)
   ADD_EXECUTABLE(${test} ${ARGN})
   LIST(APPEND tmp ${test} ${UNIT_TEST_LIST})
   SET(UNIT_TEST_LIST ${tmp} CACHE INTERNAL "List of unit tests." FORCE)
-ENDMACRO(SCIRUN_ADD_UNIT_TEST)
+ENDMACRO()
 
+MACRO(ADD_TEST_SUBDIRECTORY subdirectory)
+  IF(BUILD_TESTING)
+    ADD_SUBDIRECTORY(${subdirectory})
+  ENDIF()
+ENDMACRO()
+
+MACRO(SET_TEST_PROPERTY target folder)
+  IF(BUILD_TESTING)
+    SET_PROPERTY(TARGET ${target} PROPERTY FOLDER ${folder})
+  ENDIF(BUILD_TESTING)
+ENDMACRO()
 
 ########################################################################
 # Output directories.
@@ -382,82 +398,108 @@ ADD_SUBDIRECTORY(Testing)
 
 ########################################################################
 # Organize projects into folders for Visual Studio projects
-
+IF(WIN32 AND MSVC)
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 SET_PROPERTY(TARGET Algorithms_Base         PROPERTY FOLDER "Core/Algorithms")
-SET_PROPERTY(TARGET Algorithms_Base_Tests   PROPERTY FOLDER "Core/Algorithms/Tests")
+SET_TEST_PROPERTY(Algorithms_Base_Tests "Core/Algorithms/Tests")
+
 SET_PROPERTY(TARGET Algorithms_DataIO       PROPERTY FOLDER "Core/Algorithms")
-SET_PROPERTY(TARGET Algorithms_DataIO_Tests PROPERTY FOLDER "Core/Algorithms/Tests")
+SET_TEST_PROPERTY(Algorithms_DataIO_Tests "Core/Algorithms/Tests")
+
 SET_PROPERTY(TARGET Algorithms_Math         PROPERTY FOLDER "Core/Algorithms")
-SET_PROPERTY(TARGET Algorithms_Math_Tests   PROPERTY FOLDER "Core/Algorithms/Tests")
+SET_TEST_PROPERTY(Algorithms_Math_Tests "Core/Algorithms/Tests")
 
 SET_PROPERTY(TARGET Dataflow_Network         PROPERTY FOLDER "Dataflow")
-SET_PROPERTY(TARGET Dataflow_Network_Tests   PROPERTY FOLDER "Dataflow/Tests")
-SET_PROPERTY(TARGET Core_Datatypes         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Datatypes_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Datatypes_Mesh         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Datatypes_Mesh_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Basis         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Basis_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Logging         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Logging_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_CommandLine         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_CommandLine_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Command         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Command_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Thread         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Thread_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Geometry_Primitives         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Geometry_Primitives_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Application         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Application_Tests   PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Utils         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Utils_Tests         PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Math         PROPERTY FOLDER "Core")
-SET_PROPERTY(TARGET Core_Math_Tests         PROPERTY FOLDER "Core/Tests")
-SET_PROPERTY(TARGET Core_Serialization_Network         PROPERTY FOLDER "Dataflow/Serialization")
-SET_PROPERTY(TARGET Core_Serialization_Network_Tests         PROPERTY FOLDER "Dataflow/Serialization/Tests")
-SET_PROPERTY(TARGET Engine_Network         PROPERTY FOLDER "Dataflow/Engine")
-SET_PROPERTY(TARGET Engine_Network_Tests   PROPERTY FOLDER "Dataflow/Engine/Tests")
-SET_PROPERTY(TARGET Engine_Scheduler         PROPERTY FOLDER "Dataflow/Engine")
-SET_PROPERTY(TARGET Engine_Scheduler_Tests   PROPERTY FOLDER "Dataflow/Engine/Tests")
-SET_PROPERTY(TARGET Dataflow_State         PROPERTY FOLDER "Dataflow")
-SET_PROPERTY(TARGET Dataflow_State_Tests   PROPERTY FOLDER "Dataflow/Tests")
+SET_TEST_PROPERTY(Dataflow_Network_Tests "Dataflow/Tests")
 
-SET_PROPERTY(TARGET gmock         PROPERTY FOLDER "Testing Support")
-SET_PROPERTY(TARGET gmock_main   PROPERTY FOLDER "Testing Support")
-SET_PROPERTY(TARGET gtest         PROPERTY FOLDER "Testing Support")
-SET_PROPERTY(TARGET gtest_main   PROPERTY FOLDER "Testing Support")
-SET_PROPERTY(TARGET Testing_Utils PROPERTY FOLDER "Testing Support")
+SET_PROPERTY(TARGET Core_Datatypes         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Datatypes_Tests "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Datatypes_Mesh         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Datatypes_Mesh_Tests "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Basis         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Basis_Tests   "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Logging         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(TARGET Core_Logging_Tests   PROPERTY FOLDER "Core/Tests")
+
+SET_PROPERTY(TARGET Core_CommandLine         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(TARGET Core_CommandLine_Tests   PROPERTY FOLDER "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Command         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(TARGET Core_Command_Tests   PROPERTY FOLDER "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Thread         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(TARGET Core_Thread_Tests   PROPERTY FOLDER "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Geometry_Primitives         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Geometry_Primitives_Tests   "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Application         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Application_Tests   "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Utils         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Utils_Tests         "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Math         PROPERTY FOLDER "Core")
+SET_TEST_PROPERTY(Core_Math_Tests         "Core/Tests")
+
+SET_PROPERTY(TARGET Core_Serialization_Network         PROPERTY FOLDER "Dataflow/Serialization")
+SET_TEST_PROPERTY(Core_Serialization_Network_Tests         "Dataflow/Serialization/Tests")
+
+SET_PROPERTY(TARGET Engine_Network         PROPERTY FOLDER "Dataflow/Engine")
+SET_TEST_PROPERTY(Engine_Network_Tests   "Dataflow/Engine/Tests")
+
+SET_PROPERTY(TARGET Engine_Scheduler         PROPERTY FOLDER "Dataflow/Engine")
+SET_TEST_PROPERTY(Engine_Scheduler_Tests   "Dataflow/Engine/Tests")
+
+SET_PROPERTY(TARGET Dataflow_State         PROPERTY FOLDER "Dataflow")
+SET_TEST_PROPERTY(Dataflow_State_Tests   "Dataflow/Tests")
+
+SET_TEST_PROPERTY(gmock "Testing Support")
+SET_TEST_PROPERTY(gmock_main  "Testing Support")
+SET_TEST_PROPERTY(gtest "Testing Support")
+SET_TEST_PROPERTY(gtest_main "Testing Support")
+SET_TEST_PROPERTY(Testing_Utils "Testing Support")
 
 SET_PROPERTY(TARGET Interface_Modules_Base   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_DataIO   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_Math   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_Visualization   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_Render   PROPERTY FOLDER "Interface/Modules")
-SET_PROPERTY(TARGET Interface_Modules_Testing   PROPERTY FOLDER "Interface/Modules")
+
+SET_TEST_PROPERTY(Interface_Modules_Testing   "Interface/Modules")
+
 SET_PROPERTY(TARGET Interface_Modules_String   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_Fields   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Modules_Factory   PROPERTY FOLDER "Interface/Modules")
 SET_PROPERTY(TARGET Interface_Application   PROPERTY FOLDER "Interface/Application")
 
 SET_PROPERTY(TARGET Modules_Basic   PROPERTY FOLDER "Modules/Basic")
-SET_PROPERTY(TARGET Modules_Basic_Tests   PROPERTY FOLDER "Modules/Basic")
-SET_PROPERTY(TARGET Modules_Math   PROPERTY FOLDER "Modules/Math")
-SET_PROPERTY(TARGET Modules_Math_Tests   PROPERTY FOLDER "Modules/Math")
-SET_PROPERTY(TARGET Modules_Fields   PROPERTY FOLDER "Modules/Fields")
-SET_PROPERTY(TARGET Modules_Fields_Tests   PROPERTY FOLDER "Modules/Fields")
-SET_PROPERTY(TARGET Modules_DataIO   PROPERTY FOLDER "Modules/DataIO")
-SET_PROPERTY(TARGET Modules_DataIO_Tests   PROPERTY FOLDER "Modules/DataIO")
-SET_PROPERTY(TARGET Modules_Render   PROPERTY FOLDER "Modules/Render")
-SET_PROPERTY(TARGET Modules_Render_Tests   PROPERTY FOLDER "Modules/Render")
-SET_PROPERTY(TARGET Modules_String   PROPERTY FOLDER "Modules/String")
-SET_PROPERTY(TARGET Modules_String_Tests   PROPERTY FOLDER "Modules/String")
-SET_PROPERTY(TARGET Modules_Visualization   PROPERTY FOLDER "Modules/Visualization")
-SET_PROPERTY(TARGET Modules_Visualization_Tests   PROPERTY FOLDER "Modules/Visualization")
-SET_PROPERTY(TARGET Modules_Factory   PROPERTY FOLDER "Modules")
+SET_TEST_PROPERTY(Modules_Basic_Tests "Modules/Basic")
 
+SET_PROPERTY(TARGET Modules_Math   PROPERTY FOLDER "Modules/Math")
+SET_TEST_PROPERTY(Modules_Math_Tests "Modules/Math")
+
+SET_PROPERTY(TARGET Modules_Fields   PROPERTY FOLDER "Modules/Fields")
+SET_TEST_PROPERTY(Modules_Fields_Tests "Modules/Fields")
+
+SET_PROPERTY(TARGET Modules_DataIO   PROPERTY FOLDER "Modules/DataIO")
+SET_TEST_PROPERTY(Modules_DataIO_Tests "Modules/DataIO")
+
+SET_PROPERTY(TARGET Modules_Render   PROPERTY FOLDER "Modules/Render")
+SET_TEST_PROPERTY(Modules_Render_Tests "Modules/Render")
+
+SET_PROPERTY(TARGET Modules_String   PROPERTY FOLDER "Modules/String")
+SET_TEST_PROPERTY(Modules_String_Tests "Modules/String")
+
+SET_PROPERTY(TARGET Modules_Visualization   PROPERTY FOLDER "Modules/Visualization")
+SET_TEST_PROPERTY(Modules_Visualization_Tests "Modules/Visualization")
+
+SET_PROPERTY(TARGET Modules_Factory   PROPERTY FOLDER "Modules")
+ENDIF()
 ########################################################################
 # Custom CMake settings for CPack
 
