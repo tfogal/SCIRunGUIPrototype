@@ -8,12 +8,12 @@ using namespace SCI_Module_Counter;
 	ModuleCounter::~ModuleCounter()
 	{
 	}
-    
-    std::vector<std::string> ModuleCounter::RetrieveFilePaths(std::string pathStr) // path is the starting directory
+/*   
+    std::vector<std::string> ModuleCounter::RetrieveFilePaths(std::string pathStr) // pathStr is the starting directory
     {
-        std::vector<std::string> paths; // paths will contain all ".srn" paths in path and subdirs under path
+        std::vector<std::string> paths; // paths will contain all ".srn" paths in pathStr and subdirs under path
         namespace fs = boost::filesystem; // namespace syntax sugar
-        fs::path someDir(pathStr); // someDir is a path object for dir path (starting directory)
+        fs::path someDir(pathStr); // someDir is a path object for dir pathStr (starting directory)
         fs::directory_iterator endIter; // a null directory_iterator that represents 1 past the end of a directory.  by convention with no param is null of right type
         
         for(fs::directory_iterator dir_iter(someDir); dir_iter != endIter; ++dir_iter) // dir_iter represents an iterator for each item (fs::path) in a given directory
@@ -25,7 +25,8 @@ using namespace SCI_Module_Counter;
                 paths.push_back(tmpPathString); //pushing onto end of paths vector
             }
         }
-       
+
+
         //Once we are here, paths should have all .srn files in the path directory (not subdirs yet)
         //the for loop below searches folders that are children of path
 	for (fs::directory_iterator path_iter(someDir); path_iter != endIter; ++path_iter) // dir_iter represents an iterator for each item (fs::path) in a given directory
@@ -46,3 +47,78 @@ using namespace SCI_Module_Counter;
 	}
         return paths;
     }
+*/
+
+std::vector<std::string> ModuleCounter::RetrieveFilePaths(std::string pathStr)
+{
+  std::vector<std::string> AllFolderPaths = RetrieveAllDirPaths(pathStr);
+  std::vector<std::string> AllFilePaths;
+    for(int i=0; i<AllFolderPaths.size(); ++i)
+      {
+	std::vector<std::string> tmpPaths = RetrieveFilePaths(AllFolderPaths[i]);
+	std::vector<std::string> combinedVec;
+	combinedVec.reserve( AllFilePaths.size() + tmpPaths.size() );
+      combinedVec.insert( combinedVec.end(), AllFilePaths.begin(), AllFilePaths.end() );
+      combinedVec.insert( combinedVec.end(), tmpPaths.begin(), tmpPaths.end() );
+      AllFilePaths = combinedVec;
+      }
+    return AllFilePaths;
+}
+
+std::vector<std::string> ModuleCounter::RetrieveFilePaths(std::string pathStr)
+{
+  std::vector<std::string> paths;
+  namespace fs = boost::filesystem;
+  fs::path someDir(pathStr);
+  fs::directory_iterator endIter;
+  
+  for(fs::directory_iterator dir_iter(someDir); dir_iter != endIter; ++dir_iter)
+    {
+      fs::path tmpPath = (*dir_iter);
+      if(fs::extension(tmpPath).compare(".srn")==0)
+      {
+	std::string tmpPathString = tmpPath.string();
+	paths.push_back(tmpPathString);
+      }
+    }
+  return paths;
+}
+
+std::vector<std::string> ModuleCounter::RetrieveDirPaths(std::string pathStr)
+{
+  std::vector<std::string> dirPaths;
+  namespace fs = boost::filesystem;
+  fs::path someDir(pathStr);
+  fs::directory_iterator endIter;
+  
+  for(fs::directory_iterator dir_iter(someDir); dir_iter != endIter; ++dir_iter)
+    {
+      fs::path tmpPath = (*dir_iter);
+      if(fs::is_directory(tmpPath))
+      {
+	std::string tmpPathString = tmpPath.string();
+	dirPaths.push_back(tmpPathString);
+      }
+    }
+  return dirPaths;
+}
+
+std::vector<std::string> ModuleCounter::RetrieveAllDirPaths(std::string pathStr)
+{
+  std::vector<std::string> dirPaths;
+  std::vector<std::string> masterDirPaths;
+  dirPaths.push(pathStr);
+  while(dirPaths.length() > 0)
+    {
+      std::string tmpPath = dirPaths.pop();
+      masterDirPaths.push(tmpPath);
+      std::vector<std::string> tmpPaths = RetrieveDirPaths(tmpPath);
+      std::vector<std::string> combinedVec;
+      combinedVec.reserve( dirPaths.size() + tmpPaths.size() );
+      combinedVec.insert( combinedVec.end(), dirPaths.begin(), dirPaths.end() );
+      combinedVec.insert( combinedVec.end(), tmpPaths.begin(), tmpPaths.end() );
+      dirPaths = combinedVec;
+                
+    }
+  return masterFilePaths;
+}

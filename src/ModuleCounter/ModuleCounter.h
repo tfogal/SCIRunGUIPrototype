@@ -16,6 +16,8 @@ public:
 	~ModuleCounter();
     
     std::vector<std::string> RetrieveFilePaths(std::string pathStr);
+    std::vector<std::string> RetrieveDirPaths(std::string pathStr);
+    std::vector<std::string> RetrieveAllDirPaths(std::string pathStr);
 };
 }
 
