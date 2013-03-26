@@ -49,7 +49,7 @@ using namespace SCI_Module_Counter;
     }
 */
 
-std::vector<std::string> ModuleCounter::RetrieveFilePaths(std::string pathStr)
+std::vector<std::string> ModuleCounter::RetrieveAllFilePaths(std::string pathStr)
 {
   std::vector<std::string> AllFolderPaths = RetrieveAllDirPaths(pathStr);
   std::vector<std::string> AllFilePaths;
@@ -107,11 +107,13 @@ std::vector<std::string> ModuleCounter::RetrieveAllDirPaths(std::string pathStr)
 {
   std::vector<std::string> dirPaths;
   std::vector<std::string> masterDirPaths;
-  dirPaths.push(pathStr);
-  while(dirPaths.length() > 0)
+  dirPaths.push_back(pathStr);
+  while(dirPaths.size() > 0)
     {
-      std::string tmpPath = dirPaths.pop();
-      masterDirPaths.push(tmpPath);
+      
+      std::string tmpPath = dirPaths.back(); 
+      dirPaths.pop_back();
+      masterDirPaths.push_back(tmpPath);
       std::vector<std::string> tmpPaths = RetrieveDirPaths(tmpPath);
       std::vector<std::string> combinedVec;
       combinedVec.reserve( dirPaths.size() + tmpPaths.size() );
@@ -120,5 +122,5 @@ std::vector<std::string> ModuleCounter::RetrieveAllDirPaths(std::string pathStr)
       dirPaths = combinedVec;
                 
     }
-  return masterFilePaths;
+  return masterDirPaths;
 }

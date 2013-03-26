@@ -18,6 +18,7 @@ public:
     std::vector<std::string> RetrieveFilePaths(std::string pathStr);
     std::vector<std::string> RetrieveDirPaths(std::string pathStr);
     std::vector<std::string> RetrieveAllDirPaths(std::string pathStr);
+    std::vector<std::string> RetrieveAllFilePaths(std::string pathStr);
 };
 }
 
