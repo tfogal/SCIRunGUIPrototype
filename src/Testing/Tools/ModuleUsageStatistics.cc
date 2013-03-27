@@ -48,3 +48,9 @@ for(int i=0; i<filePaths.size(); ++i)
   }
 
 }
+
+TEST(ModuleCounterStatistics, MoveDirectory)
+{
+
+
+}
