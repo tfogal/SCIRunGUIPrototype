@@ -33,7 +33,6 @@ SET(Core_Python_SRCS
 
 SET(Core_Python_HEADERS
   PythonInterpreter.h
-  Share.h
 )
 
 ADD_LIBRARY(Core_Python 
@@ -43,16 +42,13 @@ ADD_LIBRARY(Core_Python
 
 IF(BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DBUILD_Core_Python)
-ENDIF(BUILD_SHARED_LIBS)
+ENDIF()
 
 ADD_SUBDIRECTORY(Tests)
 
 #ADD_DEFINITIONS(-DPYTHONPATH=L"${PYTHON_MODULE_SEARCH_PATH}")
 
 TARGET_LINK_LIBRARIES(Core_Python
-                      ${PYTHON_LIBRARIES}
-                      ${SCI_BOOST_LIBRARY})
-
-INCLUDE_DIRECTORIES(
-  ${PYTHON_INCLUDE_DIR}
+                      ${SCI_PYTHON_LIBRARY}
+                      ${SCI_BOOST_LIBRARY}
 )

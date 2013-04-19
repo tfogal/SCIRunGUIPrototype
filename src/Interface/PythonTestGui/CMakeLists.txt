@@ -57,23 +57,19 @@ QT4_ADD_RESOURCES(QtExampleDiagram_RESOURCES_RCC ${QtExampleDiagram_RESOURCES})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 ADD_EXECUTABLE(diagram
-${QtExampleDiagram_SOURCES}
-${QtExampleDiagram_HEADERS}
-${QtExampleDiagram_FORMS_HEADERS}
-${QtExampleDiagram_HEADERS_MOC}
-${QtExampleDiagram_RESOURCES_RCC})
+  ${QtExampleDiagram_SOURCES}
+  ${QtExampleDiagram_HEADERS}
+  ${QtExampleDiagram_FORMS_HEADERS}
+  ${QtExampleDiagram_HEADERS_MOC}
+  ${QtExampleDiagram_RESOURCES_RCC}
+)
 
 TARGET_LINK_LIBRARIES(diagram 
   PythonAPI
   Core_Python
   ${QT_LIBRARIES}
-  ${PYTHON_LIBRARIES}
+  ${SCI_PYTHON_LIBRARY}
   ${SCI_BOOST_LIBRARY}
-)
-
-INCLUDE_DIRECTORIES(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_INCLUDE_DIR}
 )
 
 ADD_SUBDIRECTORY(API)

@@ -34,7 +34,6 @@ SET(SCIRunPythonAPI_HEADERS
   NetworkEditorPythonAPI.h
   NetworkEditorPythonInterface.h
   SCIRunPythonModule.h
-  Share.h
 )
 
 ADD_LIBRARY(SCIRunPythonAPI 
@@ -43,7 +42,7 @@ ADD_LIBRARY(SCIRunPythonAPI
 )
 
 TARGET_LINK_LIBRARIES(SCIRunPythonAPI
-  ${PYTHON_LIBRARIES}
+  ${SCI_PYTHON_LIBRARY}
   ${SCI_BOOST_LIBRARY}
 )
 
@@ -55,13 +54,13 @@ IF(BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DBUILD_SCIRunPythonAPI)
     
 IF(WIN32)
-     SET_TARGET_PROPERTIES(SCIRunPythonAPI
-         PROPERTIES
-         IMPORT_SUFFIX ".pyd"
-         IMPORT_PREFIX ""
-         PREFIX ""
-		 SUFFIX ".pyd"
-     )
+  SET_TARGET_PROPERTIES(SCIRunPythonAPI
+    PROPERTIES
+    IMPORT_SUFFIX ".pyd"
+    IMPORT_PREFIX ""
+    PREFIX ""
+    SUFFIX ".pyd"
+  )
 ENDIF()
     
 ENDIF(BUILD_SHARED_LIBS)

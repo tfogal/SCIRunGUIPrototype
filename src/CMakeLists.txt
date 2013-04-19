@@ -116,28 +116,78 @@ IF(BUILD_TESTING)
 
   SET(USER_UNIT_TEST_RESOURCE_DIR "../../../scirun/trunk_ref/SCIRunUnitTestData/SCIRun5/UnitTests" CACHE PATH "Root for unit testing files")
 
-  IF(NOT EXISTS "${USER_UNIT_TEST_RESOURCE_DIR}")
-    MESSAGE( WARNING "Unit test resource path does not exist. Please set it correctly to run all the unit tests. Try mapping this svn path: https://gforge.sci.utah.edu/gf/project/sciruntests/scmsvn/?action=browse&path=%2FSCIRunUnitTestData%2FSCIRun5%2FUnitTests%2F" )
+  IF(NOT EXISTS ${USER_UNIT_TEST_RESOURCE_DIR})
+    MESSAGE( WARNING "Unit test resource path does not exist. Please set the USER_UNIT_TEST_RESOURCE_DIR PATH variable  to run all the unit tests. Try mapping this svn path: https://gforge.sci.utah.edu/gf/project/sciruntests/scmsvn/?action=browse&path=%2FSCIRunUnitTestData%2FSCIRun5%2FUnitTests%2F" )
   ENDIF()
 
   ADD_DEFINITIONS(-DTEST_RESOURCE_ROOT_DIR="${USER_UNIT_TEST_RESOURCE_DIR}" -DBUILD_TESTING)
 ENDIF()
 
 ########################################################################
-# Python
+# Configure Python external project and settings
 
 OPTION(BUILD_WITH_PYTHON "Build with python support." OFF)
 
 IF(BUILD_WITH_PYTHON)
-  MESSAGE(STATUS "Configuring Python")
-  SET(PythonLibs_FIND_VERSION "3.2")
-  FIND_PACKAGE(PythonLibs REQUIRED)
-  IF(NOT PYTHONLIBS_FOUND)
-    MESSAGE(FATAL_ERROR "Python 3.3 or 3.2 not found. Set PYTHON_INCLUDE_DIR and PYTHON_LIBRARY to the correct Python installation.")
+  SET(python_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Externals/python")
+  SET(python_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals/python")
+
+  # Python build directory included for pyconfig.h for *nix platforms. Windows builds use hardcoded config header.
+  SET(SCI_PYTHON_INCLUDE ${python_SOURCE_DIR}/Include ${python_BINARY_DIR} CACHE INTERNAL "Python include directories." FORCE)
+  SET(SCI_PYTHON_LIBRARY python CACHE INTERNAL "Python library name." FORCE)
+
+  IF(WIN32)
+    SET(python_LIB_PREFIX "")  
+  ELSE()
+    SET(python_LIB_PREFIX ${CMAKE_STATIC_LIBRARY_PREFIX})
   ENDIF()
 
-  ADD_DEFINITIONS(-DBOOST_PYTHON_STATIC_LIB)
-  ADD_DEFINITIONS(-DBUILD_WITH_PYTHON)
+
+  SET(python_LIBRARY_PATH "${python_BINARY_DIR}/${python_LIB_PREFIX}${SCI_PYTHON_LIBRARY}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  # other configuration options are RELWITHDEBINFO and MINSIZEREL
+  SET(python_LIBRARY_PATH_RELEASE "${python_BINARY_DIR}/Release/${python_LIB_PREFIX}${SCI_PYTHON_LIBRARY}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  SET(python_LIBRARY_PATH_DEBUG "${python_BINARY_DIR}/Debug/${python_LIB_PREFIX}${SCI_PYTHON_LIBRARY}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+
+  # TODO: fix install step
+  #
+  # If CMake ever allows overriding the checkout command or adding flags,
+  # git checkout -q will silence message about detached head (harmless).
+  ExternalProject_Add(Python_external
+    PREFIX ${python_BINARY_DIR}
+    GIT_REPOSITORY "https://github.com/SCIInstitute/python.git"
+    SOURCE_DIR ${python_SOURCE_DIR}
+    BINARY_DIR ${python_BINARY_DIR}
+    DOWNLOAD_DIR "${CMAKE_CURRENT_BINARY_DIR}/download/python"
+    PATCH_COMMAND ""
+    INSTALL_DIR ""
+    INSTALL_COMMAND ""
+    CMAKE_CACHE_ARGS
+      -DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}
+      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+  )
+
+  ADD_LIBRARY(${SCI_PYTHON_LIBRARY} STATIC IMPORTED GLOBAL)
+
+  ADD_DEPENDENCIES(${SCI_PYTHON_LIBRARY} Python_external)
+  ADD_DEPENDENCIES(${SCI_PYTHON_LIBRARY} ${SCI_PYTHON_INCLUDE})
+
+  IF (CMAKE_GENERATOR MATCHES "Makefiles")
+    SET_TARGET_PROPERTIES(${SCI_PYTHON_LIBRARY}
+      PROPERTIES
+        IMPORTED_LOCATION ${python_LIBRARY_PATH}
+    )
+  ELSE() # IDEs: Xcode, VS, others...
+    SET_TARGET_PROPERTIES(${SCI_PYTHON_LIBRARY}
+      PROPERTIES
+        IMPORTED_CONFIGURATIONS "RELEASE;DEBUG"
+        IMPORTED_LOCATION_RELEASE ${python_LIBRARY_PATH_RELEASE}
+        IMPORTED_LOCATION_DEBUG ${python_LIBRARY_PATH_DEBUG}
+    )
+  ENDIF()
+
+INCLUDE_DIRECTORIES(${SCI_PYTHON_INCLUDE})
+
 ENDIF(BUILD_WITH_PYTHON)  
 
 
@@ -233,6 +283,8 @@ SET(boost_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals/boost")
 SET(SCI_BOOST_INCLUDE ${boost_SOURCE_DIR} CACHE INTERNAL "Boost include directories." FORCE)
 SET(SCI_BOOST_LIBRARY boost CACHE INTERNAL "Boost library name." FORCE)
 
+#ADD_CUSTOM_TARGET(Boost_include ALL DEPENDS ${SCI_BOOST_INCLUDE})
+
 IF(WIN32)
 #  # See cmake-2.8/Modules/FindBoost.cmake
 #  #SET(boost_LIB_PREFIX "lib")
@@ -273,8 +325,8 @@ ExternalProject_Add(Boost_external
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DBUILD_WITH_PYTHON:BOOL=${BUILD_WITH_PYTHON}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+    -DSCI_PYTHON_INCLUDE:PATH=${SCI_PYTHON_INCLUDE}
+    -DSCI_PYTHON_LIBRARY:FILEPATH=${SCI_PYTHON_LIBRARY}
 )
 
 ADD_LIBRARY(${SCI_BOOST_LIBRARY} STATIC IMPORTED GLOBAL)
@@ -284,6 +336,10 @@ ADD_LIBRARY(${SCI_BOOST_LIBRARY} STATIC IMPORTED GLOBAL)
 # TODO: how to make boost include dependent on Boost_external?
 ADD_DEPENDENCIES(${SCI_BOOST_LIBRARY} Boost_external)
 ADD_DEPENDENCIES(${SCI_BOOST_LIBRARY} ${SCI_BOOST_INCLUDE})
+
+IF(BUILD_WITH_PYTHON)
+  ADD_DEPENDENCIES(Boost_external Python_external)
+ENDIF()
 
 IF (CMAKE_GENERATOR MATCHES "Makefiles")
   SET_TARGET_PROPERTIES(${SCI_BOOST_LIBRARY}
