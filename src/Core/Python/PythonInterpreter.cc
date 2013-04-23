@@ -222,6 +222,7 @@ PythonInterpreter::~PythonInterpreter()
 
 void PythonInterpreter::initialize_eventhandler()
 {
+std::cerr << "PythonInterpreter::initialize_eventhandler()" << std::endl;
 	using namespace boost::python;
 
 	PythonInterpreterPrivate::lock_type lock( this->private_->get_mutex() );
@@ -234,13 +235,14 @@ void PythonInterpreter::initialize_eventhandler()
 	for ( auto it = this->private_->modules_.begin(); 
 		it != this->private_->modules_.end(); ++it )
 	{
+std::cerr << "module=" << ( *it ).first.c_str() << std::endl;
 		PyImport_AppendInittab( ( *it ).first.c_str(), ( *it ).second );
 	}
 
-	//Py_SetProgramName( const_cast< wchar_t* >( this->private_->program_name_ ) );
-	//boost::filesystem::path lib_path( this->private_->program_name_ );
-	//lib_path = lib_path.parent_path() / PYTHONPATH;
-	//Py_SetPath( lib_path.wstring().c_str() );
+	Py_SetProgramName( const_cast< wchar_t* >( this->private_->program_name_ ) );
+	boost::filesystem::path lib_path( this->private_->program_name_ );
+	lib_path = lib_path.parent_path() / PYTHONPATH;
+	Py_SetPath( lib_path.wstring().c_str() );
 	Py_IgnoreEnvironmentFlag = 1;
 	Py_InspectFlag = 1;
 	Py_OptimizeFlag = 2;
