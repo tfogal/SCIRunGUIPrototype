@@ -42,11 +42,9 @@ SolveLinearSystemDialog::SolveLinearSystemDialog(const std::string& name, Module
   setupUi(this);
   setWindowTitle(QString::fromStdString(name));
   fixSize();
-  //executeButton_->setEnabled(false);
   
-  //connect(executeButton_, SIGNAL(clicked()), this, SIGNAL(executeButtonPressed()));
-
   //TODO: clean these up...still getting circles of push/pull
+  //TODO: need this connection ???
   connect(buttonBox->button(QDialogButtonBox::Ok), SIGNAL(clicked()), this, SLOT(pushParametersToState()));
   connect(targetErrorLineEdit_, SIGNAL(editingFinished()), this, SLOT(pushParametersToState()));
   connect(maxIterationsSpinBox_, SIGNAL(valueChanged(int)), this, SLOT(pushParametersToState()));

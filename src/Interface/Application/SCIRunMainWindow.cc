@@ -218,6 +218,9 @@ SCIRunMainWindow::SCIRunMainWindow()
 
   makeFilterButtonMenu();
   
+  connect(networkEditor_, SIGNAL(sceneChanged(const QList<QRectF>&)), this, SLOT(updateMiniView()));
+  connect(networkEditor_->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateMiniView()));
+  connect(networkEditor_->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateMiniView()));
 }
 
 void SCIRunMainWindow::initialize()
@@ -701,4 +704,13 @@ void SCIRunMainWindow::runPythonScript(const QString& scriptFileName)
 #else
   GuiLogger::Instance().log("Python not included in this build, cannot run " + scriptFileName);
 #endif
+}
+
+void SCIRunMainWindow::updateMiniView()
+{
+  //networkEditorMiniViewLabel_->setText("+" + networkEditorMiniViewLabel_->text());
+  QPixmap network = networkEditor_->sceneGrab();
+  networkEditorMiniViewLabel_->setPixmap(network.scaled(networkEditorMiniViewLabel_->size(),
+                                                   Qt::KeepAspectRatio,
+                                                   Qt::SmoothTransformation));
 }

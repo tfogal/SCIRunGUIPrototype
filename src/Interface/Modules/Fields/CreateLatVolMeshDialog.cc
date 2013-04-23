@@ -40,18 +40,13 @@ CreateLatVolMeshDialog::CreateLatVolMeshDialog(const std::string& name, SCIRun::
   setupUi(this);
   setWindowTitle(QString::fromStdString(name));
   fixSize();
-  //executeButton_->setEnabled(false);
-  
-  //connect(executeButton_, SIGNAL(clicked()), this, SIGNAL(executeButtonPressed()));
-  //TODO: here is where to start on standardizing module dialog buttons.
-  //connect(buttonBox->button(QDialogButtonBox::Ok), SIGNAL(clicked()), this, SLOT(pushMatrixToState()));
-  //push();
 
   connect(xSizeSpinBox_, SIGNAL(valueChanged(int)), this, SLOT(push()));
   connect(ySizeSpinBox_, SIGNAL(valueChanged(int)), this, SLOT(push()));
   connect(zSizeSpinBox_, SIGNAL(valueChanged(int)), this, SLOT(push()));
   connect(elementSizeNormalizedButton_, SIGNAL(clicked()), this, SLOT(push()));
   connect(elementSizeOneButton_, SIGNAL(clicked()), this, SLOT(push()));
+  buttonBox->setVisible(false);
 }
 
 void CreateLatVolMeshDialog::push()

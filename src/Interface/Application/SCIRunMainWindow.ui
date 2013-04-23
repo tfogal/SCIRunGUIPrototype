@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1505</width>
-    <height>1042</height>
+    <width>1440</width>
+    <height>1075</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,8 +44,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1182</width>
-         <height>706</height>
+         <width>1117</width>
+         <height>739</height>
         </rect>
        </property>
        <property name="acceptDrops">
@@ -62,7 +62,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1505</width>
+     <width>1440</width>
      <height>21</height>
     </rect>
    </property>
@@ -170,7 +170,7 @@
    <property name="minimumSize">
     <size>
      <width>299</width>
-     <height>223</height>
+     <height>322</height>
     </size>
    </property>
    <property name="features">
@@ -330,30 +330,6 @@
          </property>
          <item>
           <property name="text">
-           <string>ShowString</string>
-          </property>
-          <property name="font">
-           <font>
-            <strikeout>true</strikeout>
-           </font>
-          </property>
-          <property name="text">
-           <string>Not working yet.</string>
-          </property>
-          <property name="font">
-           <font>
-            <italic>true</italic>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="flags">
-           <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>ShowMesh</string>
           </property>
           <property name="whatsThis">
@@ -425,7 +401,7 @@
            <string>ViewScene</string>
           </property>
           <property name="text">
-           <string>Can display LatVolMeshes, rotate and zoom.</string>
+           <string>Can display meshes and fields, pan/rotate/zoom.</string>
           </property>
           <property name="text">
            <string/>
@@ -478,10 +454,16 @@
           <property name="text">
            <string>ReportFieldInfo</string>
           </property>
+          <property name="text">
+           <string>Same as v4</string>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>FieldToMesh</string>
+          </property>
+          <property name="text">
+           <string>Returns underlying mesh from a field.</string>
           </property>
          </item>
         </item>
@@ -631,6 +613,19 @@
        </item>
       </widget>
      </item>
+     <item>
+      <widget class="QLabel" name="networkEditorMiniViewLabel_">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Network mini view</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -697,7 +692,7 @@
             <x>20</x>
             <y>20</y>
             <width>471</width>
-            <height>141</height>
+            <height>142</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">

@@ -26,38 +26,3 @@
    DEALINGS IN THE SOFTWARE.
 */
 
-#include <Interface/Modules/Fields/ReportFieldInfoDialog.h>
-#include <Core/Algorithms/Field/ReportFieldInfoAlgorithm.h>
-#include <Dataflow/Network/ModuleStateInterface.h>  //TODO: extract into intermediate
-
-using namespace SCIRun::Gui;
-using namespace SCIRun::Dataflow::Networks;
-using namespace SCIRun::Core::Algorithms::Fields;
-
-
-ReportFieldInfoDialog::ReportFieldInfoDialog(const std::string& name, ModuleStateHandle state,
-  QWidget* parent /* = 0 */)
-  : ModuleDialogGeneric(state, parent)
-{
-  setupUi(this);
-  setWindowTitle(QString::fromStdString(name));
-  fixSize();
-
-  buttonBox->setVisible(false);
-}
-
-void ReportFieldInfoDialog::pullAndDisplayInfo() 
-{
-  auto info = any_cast_or_default<ReportFieldInfoAlgorithm::Outputs>(state_->getTransientValue("ReportedInfo"));
-
-  std::ostringstream ostr;
-  ostr << "Type: " << info.type << std::endl;
-  ostr << "Data location: " << info.dataLocation << std::endl;
-  ostr << "Center: " << info.center << std::endl;
-  ostr << "Size: " << info.size << std::endl;
-  ostr << "Data min,max: " << info.dataMin << " , " << info.dataMax << std::endl;
-  ostr << "# data: " << info.numdata_ << std::endl;
-  ostr << "# nodes: " << info.numnodes_ << std::endl;
-
-  fieldInfoTextEdit_->setPlainText(ostr.str().c_str());
-}
