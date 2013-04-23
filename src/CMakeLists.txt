@@ -123,6 +123,26 @@ IF(BUILD_TESTING)
   ADD_DEFINITIONS(-DTEST_RESOURCE_ROOT_DIR="${USER_UNIT_TEST_RESOURCE_DIR}" -DBUILD_TESTING)
 ENDIF()
 
+
+########################################################################
+# Output directories.
+
+SET(SCIRUN_CORE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCIRUN_CORE_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SCIRUN_CORE_BINARY_DIR} CACHE INTERNAL "Single output directory for building all executables.")
+MARK_AS_ADVANCED(CMAKE_LIBRARY_OUTPUT_DIRECTORY CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+
+
+########################################################################
+# Find and configure Git
+
+FIND_PACKAGE(Git)
+IF(NOT GIT_FOUND)
+  MESSAGE(FATAL_ERROR "Git not found.")
+ENDIF()
+
+
 ########################################################################
 # Configure Python external project and settings
 
@@ -135,6 +155,10 @@ IF(BUILD_WITH_PYTHON)
   # Python build directory included for pyconfig.h for *nix platforms. Windows builds use hardcoded config header.
   SET(SCI_PYTHON_INCLUDE ${python_SOURCE_DIR}/Include ${python_BINARY_DIR} CACHE INTERNAL "Python include directories." FORCE)
   SET(SCI_PYTHON_LIBRARY python CACHE INTERNAL "Python library name." FORCE)
+
+  # TODO: create variable for python module library
+  #SET(PYTHON_MODULE_SEARCH_PATH "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pythonlib.zip" CACHE INTERNAL "Python modules." FORCE)
+  SET(PYTHON_MODULE_SEARCH_PATH "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" CACHE INTERNAL "Python modules." FORCE)
 
   IF(WIN32)
     SET(python_LIB_PREFIX "")  
@@ -165,6 +189,8 @@ IF(BUILD_WITH_PYTHON)
     CMAKE_CACHE_ARGS
       -DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}
       -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      -DPYTHONLIB_DST_PATH:STRING=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+      -DPYTHON_MODULE_SEARCH_PATH:INTERNAL=${PYTHON_MODULE_SEARCH_PATH}
   )
 
   ADD_LIBRARY(${SCI_PYTHON_LIBRARY} STATIC IMPORTED GLOBAL)
@@ -187,6 +213,7 @@ IF(BUILD_WITH_PYTHON)
   ENDIF()
 
 INCLUDE_DIRECTORIES(${SCI_PYTHON_INCLUDE})
+ADD_DEFINITIONS(-DBUILD_WITH_PYTHON)
 
 ENDIF(BUILD_WITH_PYTHON)  
 
@@ -217,13 +244,6 @@ IF(APPLE)
   ADD_DEFINITIONS(-DGTEST_USE_OWN_TR1_TUPLE=1)
 ENDIF()
 
-########################################################################
-# Find and configure Git
-
-FIND_PACKAGE(Git)
-IF(NOT GIT_FOUND)
-  MESSAGE(FATAL_ERROR "Git not found.")
-ENDIF()
 
 ########################################################################
 # Find and configure Awk & Sed  {(OS X only), needed to build app bundle
@@ -498,13 +518,7 @@ ENDMACRO(SCIRUN_ADD_UNIT_TEST)
 
 
 ########################################################################
-# Output directories.
-
-SET(SCIRUN_CORE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
-
-SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCIRUN_CORE_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SCIRUN_CORE_BINARY_DIR} CACHE INTERNAL "Single output directory for building all executables.")
-MARK_AS_ADVANCED(CMAKE_LIBRARY_OUTPUT_DIRECTORY CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+# Set up subdirectories
 
 SET(BUILD_FROM_TOP_LEVEL 1)
 
