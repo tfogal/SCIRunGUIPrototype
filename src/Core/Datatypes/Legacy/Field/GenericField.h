@@ -44,9 +44,7 @@
 #include <Core/Datatypes/Legacy/Base/TypeName.h>
 #include <Core/Datatypes/Legacy/Field/MeshTypes.h>
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 #include <Core/Persistent/PersistentSTL.h>
-#endif
 #include <Core/Containers/FData.h>
 #include <Core/Datatypes/Legacy/Field/CastFData.h>
 #include <Core/Containers/StackVector.h>
@@ -106,32 +104,26 @@ public:
   //! Get the mesh describing how the elements fit together
   // const mesh_handle_type &get_typed_mesh() const;
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! Persistent I/O.
   virtual void io(Piostream &stream);
   
   //! Tag the constructor of this class and put it in the Pio DataBase
   static  PersistentTypeID type_id;
-#endif
 
   //! Tag the constructor of this class and put it in the Field DataBase
   static  FieldTypeID field_id;
   
   //! Function to retrieve the name of this field class
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   virtual std::string dynamic_type_name() const { return type_id.type; }
-#endif
 
   //! A different way of tagging a class. Currently two systems are used next
   //! to each other: type_name and get_type_description. Neither is perfect
   virtual 
   const TypeDescription* get_type_description(td_info_e td = FULL_TD_E) const;
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! Static functions to instantiate the field from Pio or using CreateField()
   static Persistent *maker();
-#endif
   static FieldHandle field_maker();  
   static FieldHandle field_maker_mesh(MeshHandle mesh);
    
@@ -169,7 +161,7 @@ class VGenericField : public VField {
       number_of_enodes_ = field->get_basis().number_of_vertices() - number_of_nodes_;
       element_dim_ = field->get_basis().domain_dimension();
       element_dofs_ = field->get_basis().dofs();
-      data_type_ = find_type_name(reinterpret_cast<typename FIELD::value_type*>(0));
+      data_type_ = find_type_name(static_cast<typename FIELD::value_type*>(0));
       for (size_t j=0; j<data_type_.size(); j++) 
         if(data_type_[j] == '_') data_type_[j] = ' ';
         
@@ -193,7 +185,6 @@ class VGenericField : public VField {
     
 };
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 // PIO
 const int GENERICFIELD_VERSION = 3;
 
@@ -204,7 +195,6 @@ GenericField<Mesh, Basis, FData>::maker()
 {
   return new GenericField<Mesh, Basis, FData>;
 }
-#endif
 
 template <class Mesh, class Basis, class FData>
 FieldHandle
@@ -226,26 +216,22 @@ GenericField<Mesh, Basis, FData>::field_maker_mesh(MeshHandle mesh)
 }
 
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 template <class Mesh, class Basis, class FData>
 PersistentTypeID 
 GenericField<Mesh, Basis, FData>::type_id(type_name(-1), "Field", maker);
-#endif
 
 template <class Mesh, class Basis, class FData>
 FieldTypeID
 GenericField<Mesh, Basis, FData>::field_id(type_name(-1),field_maker,field_maker_mesh);
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 template <class Mesh, class Basis, class FData>
 void GenericField<Mesh, Basis, FData>::io(Piostream& stream)
 {
-  // we need to pass -1 to type_name() on SGI to fix a compile bug
-  int version = stream.begin_class(type_name(-1), GENERICFIELD_VERSION);
+  int version = stream.begin_class(type_name(), GENERICFIELD_VERSION);
   
   if (stream.backwards_compat_id()) 
   {
-    version = stream.begin_class(type_name(-1), GENERICFIELD_VERSION);
+    version = stream.begin_class(type_name(), GENERICFIELD_VERSION);
   }
   Field::io(stream);
   
@@ -256,7 +242,9 @@ void GenericField<Mesh, Basis, FData>::io(Piostream& stream)
   else
     Pio(stream, mesh_);
   
+#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   mesh_->freeze();
+#endif
   
   if (version >= 3) 
   { 
@@ -264,7 +252,10 @@ void GenericField<Mesh, Basis, FData>::io(Piostream& stream)
   }
   
   Pio(stream, fdata_);
+
+#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   freeze();
+#endif
 
   if (stream.backwards_compat_id()) 
   {
@@ -275,10 +266,9 @@ void GenericField<Mesh, Basis, FData>::io(Piostream& stream)
   // A new mesh is associated with it
   if (stream.reading())
   {
-    vfield_->update_mesh_pointer(mesh_.get_rep());
+    vfield_->update_mesh_pointer(mesh_.get());
   }
 }
-#endif
 
 template <class Mesh, class Basis, class FData>
 GenericField<Mesh, Basis, FData>::GenericField() : 
@@ -423,9 +413,9 @@ GenericField<Mesh, Basis, FData>::get_type_description(td_info_e td) const
   static std::string name(type_name(0));
   static std::string namesp("SCIRun");
   static std::string path(__FILE__);
-  const TypeDescription *sub1 = SCIRun::get_type_description(reinterpret_cast<Mesh*>(0));
-  const TypeDescription *sub2 = SCIRun::get_type_description(reinterpret_cast<Basis*>(0));
-  const TypeDescription *sub3 = SCIRun::get_type_description(reinterpret_cast<FData*>(0));
+  const TypeDescription *sub1 = SCIRun::get_type_description(static_cast<Mesh*>(0));
+  const TypeDescription *sub2 = SCIRun::get_type_description(static_cast<Basis*>(0));
+  const TypeDescription *sub3 = SCIRun::get_type_description(static_cast<FData*>(0));
 
   switch (td) {
   default:

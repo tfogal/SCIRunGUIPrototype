@@ -69,8 +69,6 @@ ParallelLinearAlgebra::ParallelLinearAlgebra(ParallelLinearAlgebraSharedData& da
   if (proc == nproc_-1) end_ = size_;
   if (proc == nproc_-1) local_size_ = end_ - start_;
   local_size16_ = (local_size_&(~0xf));
-
-  //std::cout << "PLA #" << proc_ << " out of " << nproc_ << " is handling range [" << start_ << "," << end_ << ")" << std::endl;
   
   // Set reduction buffers
   // To optimize performance we alternate buffers
@@ -647,8 +645,8 @@ void ParallelLinearAlgebra::mult(const ParallelMatrix& a, const ParallelVector& 
   double* odata = r.data_;
   
   double* data = a.data_;
-  int* rows = a.rows_;
-  int* columns = a.columns_;
+  auto rows = a.rows_;
+  auto columns = a.columns_;
   
   for(size_t i=start_;i<end_;i++)
   {
@@ -718,8 +716,8 @@ void ParallelLinearAlgebra::absdiag(const ParallelMatrix& a, ParallelVector& r)
   double* odata = r.data_;
   
   double* data = a.data_;
-  int* rows = a.rows_;
-  int* columns = a.columns_;
+  auto rows = a.rows_;
+  auto columns = a.columns_;
 
   for(size_t i=start_;i<end_;i++)
   {

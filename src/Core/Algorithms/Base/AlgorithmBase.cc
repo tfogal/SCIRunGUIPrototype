@@ -34,6 +34,16 @@
 using namespace SCIRun::Core::Algorithms;
 using namespace SCIRun::Core::Logging;
 
+AlgorithmParameterName::AlgorithmParameterName(const std::string& name) : name_(name) 
+{
+  if (!std::all_of(name.begin(), name.end(), isalnum))
+  {
+    //std::cout << "APN not accessible from Python: " << name << std::endl;
+    //TODO: log this, exception is overkill.
+    //THROW_INVALID_ARGUMENT("Algorithm parameter name must be alphanumeric");
+  }
+}
+
 AlgorithmBase::~AlgorithmBase() {}
 
 int AlgorithmParameter::getInt() const
@@ -57,7 +67,7 @@ std::string AlgorithmParameter::getString() const
 bool AlgorithmParameter::getBool() const
 {
   const bool* v = boost::get<bool>(&value_);
-  return v ? *v : false;
+  return v ? *v : (getInt() != 0);
 }
 
 AlgorithmLogger::AlgorithmLogger() : defaultLogger_(new ConsoleLogger)

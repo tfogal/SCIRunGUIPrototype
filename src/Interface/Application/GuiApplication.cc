@@ -27,9 +27,7 @@
 */
 
 #include <QApplication>
-#include <QSplashScreen>
 #include <QMessageBox>
-#include <QTimer>
 #include <Interface/Application/GuiApplication.h>
 #include <Interface/Application/SCIRunMainWindow.h>
 #include <Core/Application/Application.h>
@@ -52,11 +50,11 @@ int GuiApplication::run(int argc, const char* argv[])
   catch (std::exception& e)
   {
     QMessageBox::critical(0, "Critical error", "Unhandled exception: " + QString(e.what()) + "\nExiting now.");
-    return -1;
+    return 1;
   }
   catch (...)
   {
     QMessageBox::critical(0, "Critical error", "Unknown unhandled exception: exiting now.");
-    return -1;
+    return 1;
   }
 }

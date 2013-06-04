@@ -29,16 +29,16 @@
 #include <cmath>
 #include <cstring>
 
-//#include <Core/Util/TypeDescription.h>
+#include <Core/Utils/Legacy/TypeDescription.h>
 #include <Core/GeometryPrimitives/Transform.h>
 #include <Core/GeometryPrimitives/Point.h>
 #include <Core/Math/MiscMath2.h>
-//#include <Core/Geometry/Tensor.h>
+#include <Core/GeometryPrimitives/Tensor.h>
 
+using namespace SCIRun;
 using namespace SCIRun::Core::Geometry;
 using namespace SCIRun::Core::Math;
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 
 Persistent* transform_maker() {
   return new Transform();
@@ -48,7 +48,6 @@ Persistent* transform_maker() {
 PersistentTypeID Transform::type_id("Transform", "Persistent", 
                                     transform_maker);
 
-#endif
 
 Transform::Transform()
 {
@@ -581,7 +580,7 @@ Transform::project_normal_inplace(Vector& p) const
   res.z(imat[0][2]*p.x()+imat[1][2]*p.y()+imat[2][2]*p.z());
   p = res;
 }
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
 void
 Transform::get(double* gmat) const
 {
@@ -636,7 +635,7 @@ Transform::set_trans(double* pmat)
   }
   inverse_valid = false;
 }
-#endif
+
 void
 Transform::load_zero(double m[4][4])
 {
@@ -891,7 +890,7 @@ operator*(Transform &t, const Vector &d)
 
   return Vector(result[0], result[1], result[2]);
 }
-
+#endif
 const int TRANSFORM_VERSION = 1;
 
 void 
@@ -930,7 +929,7 @@ Transform::io(Piostream& stream)
 }
 
 void
-Pio(Piostream& stream, Transform*& obj)
+SCIRun::Core::Geometry::Pio(Piostream& stream, Transform*& obj)
 {
   SCIRun::Persistent* pobj=obj;
   stream.io(pobj, Transform::type_id);
@@ -940,11 +939,48 @@ Pio(Piostream& stream, Transform*& obj)
   }
 }
 
-const std::string& 
-Transform::get_h_file_path() 
+void
+  SCIRun::Core::Geometry::Pio_old(Piostream& stream, Transform& obj) 
 {
-  static const std::string path(TypeDescription::cc_to_h(__FILE__));
-  return path;
+  stream.begin_cheap_delim();
+  for (int i=0; i<4; i++) 
+  {
+    for (int j=0; j<4; j++) 
+    {
+      if (stream.reading()) 
+      {
+        double tmp;
+        Pio(stream, tmp);
+        obj.set_mat_val(i, j, tmp);
+        Pio(stream, tmp);
+        obj.set_imat_val(i, j, tmp);
+      } 
+      else 
+      {
+        double tmp = obj.get_mat_val(i, j);
+        Pio(stream, tmp);
+        tmp = obj.get_imat_val(i, j);
+        Pio(stream, tmp);
+      }
+    }
+  }
+  int iv = obj.inv_valid();
+  Pio(stream, iv);
+
+  if (stream.reading()) 
+  {
+    obj.set_inv_valid(iv);
+  }
+  stream.end_cheap_delim();
+}
+
+namespace 
+{
+  const std::string& get_Transform_h_file_path() 
+  {
+    static const std::string path(TypeDescription::cc_to_h(__FILE__));
+    return path;
+  }
 }
 
 const TypeDescription*
@@ -952,7 +988,7 @@ get_type_description(Transform*)
 {
   static TypeDescription* td = 0;
   if(!td){
-    td = new TypeDescription("Transform", Transform::get_h_file_path(), 
+    td = new TypeDescription("Transform", get_Transform_h_file_path(), 
                                 "SCIRun");
   }
   return td;
@@ -980,7 +1016,7 @@ operator*(const Transform &t, const Tensor &d)
     }
   }
 
-  return (SCIRun::Tensor(result[0],result[1],result[2],result[4],result[5],result[8]));
+  return (Tensor(result[0],result[1],result[2],result[4],result[5],result[8]));
 }
 
 
@@ -1005,6 +1041,6 @@ operator*(const Tensor &d, const Transform &t)
     }
   }
   
-  return (SCIRun::Tensor(result[0],result[1],result[2],result[4],result[5],result[8]));
+  return (Tensor(result[0],result[1],result[2],result[4],result[5],result[8]));
 }
-#endif
+

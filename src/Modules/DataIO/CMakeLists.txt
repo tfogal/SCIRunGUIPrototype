@@ -27,19 +27,25 @@
 #
 
 SET(Modules_DataIO_SRCS
+  ReadField.cc
   ReadMatrix.cc
   ReadMatrixState.cc
   ReadMesh.cc
   ReadMeshState.cc
+  WriteField.cc
   WriteMatrix.cc
   WriteMatrixState.cc
 )
 
 SET(Modules_DataIO_HEADERS
+  GenericReader.h
+  GenericWriter.h
+  ReadField.h
   ReadMatrix.h
   ReadMatrixState.h
   ReadMesh.h
   ReadMeshState.h
+  WriteField.h
   WriteMatrix.h
   WriteMatrixState.h
 )
@@ -52,6 +58,7 @@ ADD_LIBRARY(Modules_DataIO
 TARGET_LINK_LIBRARIES(Modules_DataIO
   Dataflow_Network
   Core_Datatypes
+  Core_Datatypes_Legacy_Field
   Algorithms_DataIO
   ${SCI_BOOST_LIBRARY}
 )

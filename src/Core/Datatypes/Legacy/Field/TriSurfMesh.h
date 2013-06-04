@@ -1283,18 +1283,14 @@ public:
 
   ///////////////////////////////////////////////////
   // STATIC VARIABLES AND FUNCTIONS
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER  
   //! Export this class using the old Pio system
   virtual void io(Piostream&);
   
   //! This ID is created as soon as this class will be instantiated  
   static PersistentTypeID trisurf_typeid;
-#endif
   //! Core functionality for getting the name of a templated mesh class
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   virtual std::string dynamic_type_name() const { return trisurf_typeid.type; }
-#endif
   //! Type description, used for finding names of the mesh class for
   //! dynamic compilation purposes. Some of this should be obsolete  
   virtual const TypeDescription *get_type_description() const;
@@ -1305,10 +1301,8 @@ public:
   static const TypeDescription* elem_type_description()
     { return face_type_description(); }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! This function returns a maker for Pio.
   static Persistent *maker() { return new TriSurfMesh<Basis>(); }
-#endif
   //! This function returns a handle for the virtual interface.
   static MeshHandle mesh_maker() { return boost::make_shared<TriSurfMesh<Basis>>(); }
   
@@ -2026,12 +2020,10 @@ struct less_int
   }
 };
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-
 template <class Basis>
 PersistentTypeID
 TriSurfMesh<Basis>::trisurf_typeid(TriSurfMesh<Basis>::type_name(-1), "Mesh", maker);
-#endif
+
 template <class Basis>
 const std::string
 TriSurfMesh<Basis>::type_name(int n)
@@ -2487,14 +2479,16 @@ TriSurfMesh<Basis>::synchronize(mask_type sync)
     boost::thread syncthread(syncclass);
   }
 
+#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER  //deadlock here, need to review usage.
   // Wait until threads are done
   Core::Thread::UniqueLock lock(synchronize_lock_.get());
   while ((synchronized_ & sync) != sync)
   {
     synchronize_cond_.wait(lock);
   }
-
+#endif
   synchronize_lock_.unlock();
+
 
   return (true);
 }
@@ -3656,8 +3650,6 @@ TriSurfMesh<Basis>::add_triangle(const Core::Geometry::Point &p0,
   return add_triangle(add_find_point(p0), add_find_point(p1), add_find_point(p2));
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-
 #define TRISURFMESH_VERSION 4
 
 template <class Basis>
@@ -3691,9 +3683,8 @@ TriSurfMesh<Basis>::io(Piostream &stream)
   }
 
   if (stream.reading())
-    vmesh_ = CreateVTriSurfMesh(this);
+    vmesh_.reset(CreateVTriSurfMesh(this));
 }
-#endif
 
 template <class Basis>
 void

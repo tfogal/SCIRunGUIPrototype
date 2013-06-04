@@ -38,6 +38,7 @@
 #include <Modules/Basic/SendScalar.h>
 #include <Modules/Basic/ReceiveTestMatrix.h>
 #include <Modules/Basic/SendTestMatrix.h>
+#include <Modules/Basic/PrintDatatype.h>
 #include <Modules/Math/EvaluateLinearAlgebraUnary.h>
 #include <Modules/Math/EvaluateLinearAlgebraBinary.h>
 #include <Modules/Math/ReportMatrixInfo.h>
@@ -52,10 +53,11 @@
 #include <Modules/DataIO/ReadMatrix.h>
 #include <Modules/DataIO/WriteMatrix.h>
 #include <Modules/DataIO/ReadMesh.h>
+#include <Modules/DataIO/ReadField.h>
+#include <Modules/DataIO/WriteField.h>
 #include <Modules/String/CreateString.h>
 #include <Modules/Visualization/ShowString.h>
 #include <Modules/Visualization/ShowField.h>
-#include <Modules/Visualization/ShowMesh.h>
 #include <Modules/Visualization/MatrixAsVectorField.h>
 #include <Modules/Render/ViewScene.h>
 
@@ -143,6 +145,17 @@ ModuleDescription HardCodedModuleFactory::lookupDescription(const ModuleLookupIn
     description.input_ports_ = WriteMatrixModule::inputPortDescription(WriteMatrixModule::inputPort0Name(), WriteMatrixModule::inputPort1Name());
     description.maker_ = boost::factory<WriteMatrixModule*>();
   }
+  else if (name.find("ReadField") != std::string::npos)
+  {
+    description.input_ports_ += ReadFieldModule::inputPortDescription(ReadFieldModule::inputPort0Name());
+    description.output_ports_ = ReadFieldModule::outputPortDescription(ReadFieldModule::outputPort0Name(), ReadFieldModule::outputPort1Name());
+    description.maker_ = boost::factory<ReadFieldModule*>();
+  }
+  else if (name.find("WriteField") != std::string::npos)
+  {
+    description.input_ports_ = WriteFieldModule::inputPortDescription(WriteFieldModule::inputPort0Name(), WriteFieldModule::inputPort1Name());
+    description.maker_ = boost::factory<WriteFieldModule*>();
+  }
   else if (name.find("ReadMesh") != std::string::npos)
   {
     description.input_ports_ += ReadMeshModule::inputPortDescription(ReadMeshModule::inputPort0Name());
@@ -158,6 +171,11 @@ ModuleDescription HardCodedModuleFactory::lookupDescription(const ModuleLookupIn
   {
     description.input_ports_ += ReceiveScalarModule::inputPortDescription(ReceiveScalarModule::inputPort0Name());
     description.maker_ = boost::factory<ReceiveScalarModule*>();
+  }
+  else if (name.find("PrintDatatype") != std::string::npos)
+  {
+    description.input_ports_ += PrintDatatypeModule::inputPortDescription(PrintDatatypeModule::inputPort0Name());
+    description.maker_ = boost::factory<PrintDatatypeModule*>();
   }
   else if (name.find("SendTestMatrix") != std::string::npos)
   {
@@ -177,6 +195,7 @@ ModuleDescription HardCodedModuleFactory::lookupDescription(const ModuleLookupIn
   else if (name.find("ReportFieldInfo") != std::string::npos)
   {
     description.input_ports_ += ReportFieldInfoModule::inputPortDescription(ReportFieldInfoModule::inputPort0Name());
+    description.output_ports_ = ReportFieldInfoModule::outputPortDescription(ReportFieldInfoModule::outputPort0Name(), ReportFieldInfoModule::outputPort1Name());
     description.maker_ = boost::factory<ReportFieldInfoModule*>();
   }
   else if (name.find("AppendMatrix") != std::string::npos)
@@ -224,12 +243,6 @@ ModuleDescription HardCodedModuleFactory::lookupDescription(const ModuleLookupIn
     description.input_ports_ += ShowFieldModule::inputPortDescription(ShowFieldModule::inputPort0Name());
     description.output_ports_ += ShowFieldModule::outputPortDescription(ShowFieldModule::outputPort0Name());
     description.maker_ = boost::factory<ShowFieldModule*>();
-  }
-  else if (name.find("ShowMesh") != std::string::npos)
-  {
-    description.input_ports_ = ShowMeshModule::inputPortDescription(ShowMeshModule::inputPort0Name(), ShowMeshModule::inputPort1Name());
-    description.output_ports_ += ShowMeshModule::outputPortDescription(ShowMeshModule::outputPort0Name());
-    description.maker_ = boost::factory<ShowMeshModule*>();
   }
   else if (name.find("CreateLatVolMesh") != std::string::npos)
   {

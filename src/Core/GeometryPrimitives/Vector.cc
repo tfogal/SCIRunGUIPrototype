@@ -31,9 +31,7 @@
 ///////////////////////////
 
 #include <Core/GeometryPrimitives/Vector.h>
-
-
-//#include <Core/Persistent/Persistent.h>
+#include <Core/Persistent/Persistent.h>
 
 #include <iostream>
 #include <sstream>
@@ -160,9 +158,10 @@ Vector::rotz90(const int c)
     break;
   }
 }
+#endif
 
 void
-Pio(Piostream& stream, Vector& p)
+SCIRun::Core::Geometry::Pio(Piostream& stream, Vector& p)
 {
   stream.begin_cheap_delim();
   double x,y,z;
@@ -183,7 +182,7 @@ Pio(Piostream& stream, Vector& p)
   }
   stream.end_cheap_delim();
 }
-#endif
+
 
 const std::string& 
 SCIRun::Vector_get_h_file_path() 

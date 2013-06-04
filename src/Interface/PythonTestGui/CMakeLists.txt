@@ -67,6 +67,7 @@ ADD_EXECUTABLE(diagram
 TARGET_LINK_LIBRARIES(diagram 
   PythonAPI
   Core_Python
+  log4cpp
   ${QT_LIBRARIES}
   ${SCI_PYTHON_LIBRARY}
   ${SCI_BOOST_LIBRARY}

@@ -70,22 +70,16 @@ namespace Gui {
     virtual bool execute();
   };
 
-  class PrintHelpGui : public Core::Commands::GuiCommand
-  {
-  public:
-    virtual bool execute();
-  };
-
-  class PrintVersionGui : public Core::Commands::GuiCommand
-  {
-  public:
-    virtual bool execute();
-  };
-
   class ShowMainWindowGui : public Core::Commands::GuiCommand
   {
   public:
-    ShowMainWindowGui();
+    virtual bool execute();
+  };
+  
+  class ShowSplashScreenGui : public Core::Commands::GuiCommand
+  {
+  public:
+    ShowSplashScreenGui();
     virtual bool execute();
   private:
     static void initSplashScreen();

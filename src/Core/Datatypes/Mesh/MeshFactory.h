@@ -26,18 +26,15 @@
    DEALINGS IN THE SOFTWARE.
 */
 
-///////////////////////////
-// PORTED SCIRUN v4 CODE //
-///////////////////////////
-
 #ifndef CORE_DATATYPES_MESHFACTORY_H
 #define CORE_DATATYPES_MESHFACTORY_H 
 
 #include <boost/noncopyable.hpp>
 #include <Core/Utils/Singleton.h>
 #include <Core/Utils/TypeIDTable.h>
+#include <Core/Datatypes/Legacy/Base/Types.h>
 #include <Core/Datatypes/Mesh/FieldFwd.h>
-#include <Core/Datatypes/Mesh/Mesh.h>
+//#include <Core/Datatypes/Mesh/Mesh.h>
 #include <Core/GeometryPrimitives/Point.h>
 #include <Core/Datatypes/Mesh/Share.h>
 
@@ -47,14 +44,14 @@ namespace Datatypes {
 
   struct SCISHARE MeshConstructionParameters
   {
-    Mesh5::size_type x_, y_, z_;
+    size_type x_, y_, z_;
     Geometry::Point min_, max_;
 
-    MeshConstructionParameters(Mesh5::size_type x, Mesh5::size_type y, Mesh5::size_type z, const Geometry::Point& min, const Geometry::Point& max);
+    MeshConstructionParameters(size_type x, size_type y, size_type z, const Geometry::Point& min, const Geometry::Point& max);
   };
 
-  typedef MeshHandle5 (*MeshDefaultConstructor)();
-  typedef MeshHandle5 (*MeshConstructor)(const MeshConstructionParameters&);
+  typedef MeshHandle (*MeshDefaultConstructor)();
+  typedef MeshHandle (*MeshConstructor)(const MeshConstructionParameters&);
 
   //TODO: yucky double-singleton to separate registration from construction.
 
@@ -63,13 +60,13 @@ namespace Datatypes {
     CORE_SINGLETON( MeshFactory );
 
   public:
-    MeshHandle5 CreateMesh(const Field5Information& info, const MeshConstructionParameters& params);
-    MeshHandle5 CreateMesh(const Field5Information& info);
-    MeshHandle5 CreateMesh(const std::string& type);
+    //MeshHandle CreateMesh(const FieldInformation& info, const MeshConstructionParameters& params);
+    //MeshHandle CreateMesh(const FieldInformation& info);
+    MeshHandle CreateMesh(const std::string& type);
 
   private:
     MeshFactory();
-    MeshHandle5 CreateMesh(const std::string& type, const MeshConstructionParameters& params);
+    MeshHandle CreateMesh(const std::string& type, const MeshConstructionParameters& params);
     class MeshRegistry& registry_;
   };
 
@@ -102,4 +99,3 @@ namespace Datatypes {
 }}}
 
 #endif
-

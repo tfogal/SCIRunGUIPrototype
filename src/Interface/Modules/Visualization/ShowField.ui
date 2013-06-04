@@ -60,7 +60,7 @@
      <item>
       <widget class="QTabWidget" name="displayOptionsTabs_">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="nodesTab_">
         <attribute name="title">
@@ -470,7 +470,7 @@
           <rect>
            <x>20</x>
            <y>20</y>
-           <width>91</width>
+           <width>181</width>
            <height>31</height>
           </rect>
          </property>
@@ -507,9 +507,9 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="defaultMeshColorButton_">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>Default Color</string>

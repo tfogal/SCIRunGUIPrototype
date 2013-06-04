@@ -32,7 +32,7 @@
 #ifndef CORE_BASIS_HEXTRICUBICHMTSCALEFACTORSEDGES_H
 #define CORE_BASIS_HEXTRICUBICHMTSCALEFACTORSEDGES_H 1
 
-//#include <Core/Persistent/PersistentSTL.h>
+#include <Core/Persistent/PersistentSTL.h>
 #include <Core/Basis/HexTrilinearLgn.h>
 
 namespace SCIRun {
@@ -576,9 +576,9 @@ public:
     return get_volume3(this, cd);
   }
   static const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 template <class T>
@@ -602,19 +602,9 @@ HexTricubicHmtScaleFactorsEdges<T>::type_name(int n)
 
 
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int HEXTRICUBICHMTSCALEFACTORSEDGES_VERSION = 1;
-template <class T>
-void
-HexTricubicHmtScaleFactorsEdges<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     HEXTRICUBICHMTSCALEFACTORSEDGES_VERSION);
-  Pio(stream, this->derivs_);
-  Pio(stream, this->scalefactorse_);
-  stream.end_class();
-}
-#endif
+
+
+
 }}
 template <class T>
 const TypeDescription*
@@ -632,6 +622,18 @@ const TypeDescription*
       TypeDescription::BASIS_E);
   }
   return td;
+}
+
+const int HEXTRICUBICHMTSCALEFACTORSEDGES_VERSION = 1;
+template <class T>
+void
+  Core::Basis::HexTricubicHmtScaleFactorsEdges<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    HEXTRICUBICHMTSCALEFACTORSEDGES_VERSION);
+  Pio(stream, this->derivs_);
+  Pio(stream, this->scalefactorse_);
+  stream.end_class();
 }
 }
 

@@ -26,10 +26,10 @@
    DEALINGS IN THE SOFTWARE.
 */
 
-
-
 #include <Core/Datatypes/Legacy/Field/Field.h>
-
+#include <Core/Datatypes/Legacy/Field/VMesh.h>
+#include <Core/Datatypes/Legacy/Base/PropertyManager.h>
+#include <Core/Utils/Legacy/Debug.h>
 #include <Core/Utils/Legacy/ProgressReporter.h>
 #include <Core/Thread/Mutex.h>
 #include <sci_debug.h>
@@ -44,12 +44,14 @@ Field::Field()
   DEBUG_CONSTRUCTOR("Field")  
 }
 
+Field::Field(const Field& copy) : Core::Datatypes::Datatype(copy) 
+{ DEBUG_CONSTRUCTOR("Field");  }
+
 Field::~Field()
 {
   DEBUG_DESTRUCTOR("Field")  
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 const int FIELD_VERSION = 3;
 
 void 
@@ -105,13 +107,14 @@ Field::io(Piostream& stream)
     }
   }
 
-  PropertyManager::io(stream);
+  PropertyManager().io(stream);
   stream.end_class();
 }
 
+std::string Field::type_name() const { return type_id.type; }   
+
 // initialize the static member type_id
-PersistentTypeID Field::type_id("Field", "PropertyManager", 0);
-#endif
+PersistentTypeID Field::type_id("Field", "Datatype", 0);
 
 // A list to keep a record of all the different Field types that
 // are supported through a virtual interface

@@ -30,55 +30,26 @@
 #ifndef CORE_DATATYPES_LEGACY_MESH_H
 #define CORE_DATATYPES_LEGACY_MESH_H 1
 
-#include <Core/Containers/StackVector.h>
-
 #include <Core/Datatypes/Legacy/Base/Types.h>
-#include <Core/Datatypes/Legacy/Base/PropertyManager.h>
-#include <Core/Datatypes/Legacy/Field/FieldRNG.h>
-#include <Core/Datatypes/Legacy/Field/FieldVIndex.h>
-#include <Core/Datatypes/Legacy/Field/FieldVIterator.h>
 
-#include <Core/GeometryPrimitives/Point.h>
-#include <Core/GeometryPrimitives/Vector.h>
-#include <Core/GeometryPrimitives/Tensor.h>
-#include <Core/GeometryPrimitives/BBox.h>
-
-#include <Core/Utils/Legacy/Environment.h>
-#include <Core/Utils/Legacy/Debug.h>
+#include <Core/GeometryPrimitives/GeomFwd.h>
 
 #include <Core/Datatypes/Datatype.h>
 #include <Core/Datatypes/Mesh/MeshTraits.h>
+#include <Core/Datatypes/Legacy/Field/FieldFwd.h>
 
 #include <Core/Datatypes/Legacy/Field/share.h>
 
 namespace SCIRun {
 
-class Mesh;
-class VMesh;
-class TypeDescription;
-
-typedef boost::shared_ptr<Mesh> MeshHandle;
-
-// We reserve the last unsigned int value as a marker for bad mesh
-// indices.  This is useful for example when there are no neighbors,
-// or when elements are deleted.
-#define MESH_NO_NEIGHBOR -1
-
-
-
 class SCISHARE Mesh : public Core::Datatypes::Datatype, public Core::Datatypes::MeshTraits<VMesh>
 {
 public: 
-
-  //! Constructor
   Mesh();
-  Mesh(const Mesh& copy) : Core::Datatypes::Datatype(copy) 
-    { DEBUG_CONSTRUCTOR("Mesh");  }
+  Mesh(const Mesh& copy);
   
-  //! Destructor
   virtual ~Mesh();
   
-  //! Clone the field needed by locking handle system
   virtual Mesh *clone() const = 0;
 
   virtual MeshFacadeHandle getFacade() const = 0;
@@ -122,29 +93,14 @@ public:
   virtual bool synchronize(mask_type) { return false; }
   virtual bool unsynchronize(mask_type) { return false; }
 
-
-  //! Optional virtual functions.
-//  virtual bool has_normals() const { return false; }
-//  virtual bool has_face_normals() const { return false; }
-//  virtual bool is_editable() const { return false; } // supports add_elem(...)
-//  virtual int  dimensionality() const = 0;
-//  virtual int  topology_geometry() const = 0;
-//  virtual bool get_dim(vector<size_type>&) const { return false; }
-//  virtual bool get_search_grid_info(size_type& /*i*/, size_type& /*j*/, 
-//                          size_type& /*k*/, Transform& /*trans*/) { return false; }
   virtual int basis_order();
   
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! Persistent I/O.
   void    io(Piostream &stream);
   static  PersistentTypeID type_id;
   static  const std::string type_name(int n = -1);
   virtual const TypeDescription *get_type_description() const = 0;
-#endif
-
-  // The minimum value for elemental checking
-//  double MIN_ELEMENT_VAL;
-  
+    
   //! Virtual interface functions:
   //! Get the virtual mesh interface, this returns the pointer to an internal
   //! object that has all the virtual functions. This object will be destroyed
@@ -159,27 +115,27 @@ class SCISHARE MeshTypeID {
                 MeshHandle (*mesh_maker)());
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*latvol_maker)(Mesh::size_type x, Mesh::size_type y, Mesh::size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max)
+                MeshHandle (*latvol_maker)(size_type x, size_type y, size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max)
                 );
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*image_maker)(Mesh::size_type x, Mesh::size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max)
+                MeshHandle (*image_maker)(size_type x, size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max)
                 );
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*scanline_maker)(Mesh::size_type x,const Core::Geometry::Point& min, const Core::Geometry::Point& max)
+                MeshHandle (*scanline_maker)(size_type x,const Core::Geometry::Point& min, const Core::Geometry::Point& max)
                 );
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*structhexvol_maker)(Mesh::size_type x, Mesh::size_type y, Mesh::size_type z)
+                MeshHandle (*structhexvol_maker)(size_type x, size_type y, size_type z)
                 );
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*structquadsurf_maker)(Mesh::size_type x, Mesh::size_type y)
+                MeshHandle (*structquadsurf_maker)(size_type x, size_type y)
                 );
     MeshTypeID(const std::string& type, 
                 MeshHandle (*mesh_maker)(),
-                MeshHandle (*structcurve_maker)(Mesh::size_type x)
+                MeshHandle (*structcurve_maker)(size_type x)
                 );
 
     
@@ -187,24 +143,44 @@ class SCISHARE MeshTypeID {
     MeshHandle (*mesh_maker)();
     
     // Custom Constructors
-    MeshHandle (*latvol_maker)(Mesh::size_type x, Mesh::size_type y, Mesh::size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-    MeshHandle (*image_maker)(Mesh::size_type x, Mesh::size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-    MeshHandle (*scanline_maker)(Mesh::size_type x, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-    MeshHandle (*structhexvol_maker)(Mesh::size_type x, Mesh::size_type y, Mesh::size_type z);
-    MeshHandle (*structquadsurf_maker)(Mesh::size_type x, Mesh::size_type y);
-    MeshHandle (*structcurve_maker)(Mesh::size_type x);
+    MeshHandle (*latvol_maker)(size_type x, size_type y, size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+    MeshHandle (*image_maker)(size_type x, size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+    MeshHandle (*scanline_maker)(size_type x, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+    MeshHandle (*structhexvol_maker)(size_type x, size_type y, size_type z);
+    MeshHandle (*structquadsurf_maker)(size_type x, size_type y);
+    MeshHandle (*structcurve_maker)(size_type x);
 
     
 };
 
 
-MeshHandle CreateMesh(const std::string& type);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y, Mesh::size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y, Mesh::size_type z);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y);
-MeshHandle CreateMesh(const std::string& type, Mesh::size_type x);
+SCISHARE MeshHandle CreateMesh(const std::string& type);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x, size_type y, size_type z, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x, size_type y, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x, const Core::Geometry::Point& min, const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x, size_type y, size_type z);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x, size_type y);
+SCISHARE MeshHandle CreateMesh(const std::string& type, size_type x);
+
+SCISHARE MeshHandle CreateMesh(FieldInformation &info);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x,size_type y);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x,size_type y,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x,size_type y,size_type z);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,size_type x,size_type y,size_type z,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,const std::vector<size_type>& x);
+SCISHARE MeshHandle CreateMesh(FieldInformation &info,const std::vector<size_type>& x,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x,size_type y);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x,size_type y,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x,size_type y,size_type z);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh,size_type x,size_type y,size_type z,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh, const std::vector<size_type>& x);
+SCISHARE MeshHandle CreateMesh(mesh_info_type mesh, const std::vector<size_type>& x,const Core::Geometry::Point& min,const Core::Geometry::Point& max);
 
 
 //! General case locate, search each elem.

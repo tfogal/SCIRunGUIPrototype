@@ -73,12 +73,27 @@ namespace Datatypes {
 
     virtual size_t nrows() const { return this->rows(); }
     virtual size_t ncols() const { return this->cols(); }
+
+    // Persistent representation...
+    virtual std::string dynamic_type_name() const { return type_id.type; }
+    virtual void io(Piostream&);
+    static PersistentTypeID type_id;
+
   private:
     virtual void print(std::ostream& o) const
     {
       o << static_cast<const EigenBase&>(*this);
     }
   };
+
+  template <typename T>
+  static Persistent* ColumnMatrixMaker()
+  {
+    return new DenseColumnMatrixGeneric<T>();
+  }
+
+  template <typename T>
+  PersistentTypeID DenseColumnMatrixGeneric<T>::type_id("ColumnMatrix", "MatrixBase", ColumnMatrixMaker<T>);
 
 }}}
 

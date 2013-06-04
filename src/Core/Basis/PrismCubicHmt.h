@@ -235,9 +235,9 @@ public:
   }
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 
@@ -261,18 +261,8 @@ PrismCubicHmt<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int PRISMCUBICHMT_VERSION = 1;
-template <class T>
-void
-PrismCubicHmt<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     PRISMCUBICHMT_VERSION);
-  Pio(stream, this->derivs_);
-  stream.end_class();
-}
-#endif
+
+
 }}
 
 template <class T>
@@ -290,6 +280,18 @@ const TypeDescription* get_type_description(Core::Basis::PrismCubicHmt<T> *)
   }
   return td;
 }
+
+const int PRISMCUBICHMT_VERSION = 1;
+template <class T>
+void
+  Core::Basis::PrismCubicHmt<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    PRISMCUBICHMT_VERSION);
+  Pio(stream, this->derivs_);
+  stream.end_class();
+}
+
 }
 
 #endif

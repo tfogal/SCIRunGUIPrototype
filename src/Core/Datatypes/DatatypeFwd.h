@@ -53,8 +53,6 @@ namespace Datatypes {
   typedef Scalar<double> Double;
 
   class String;
-  class Field5;
-  class Mesh5;
   class GeometryObject;
 
 }}

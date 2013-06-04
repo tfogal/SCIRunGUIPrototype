@@ -39,12 +39,12 @@ namespace Core {
 namespace Datatypes {
   
   /*
-    IDEA: Mesh5 iterators should iterate over entire values, not just indexes, producing values on demand. 
+    IDEA: Mesh iterators should iterate over entire values, not just indexes, producing values on demand. 
     A "SmartIndex" for the mesh.
     E.G. for LatVols:
-    class SmartNodeIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh5::index_type,Point> >
-    class SmartEdgeIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh5::index_type,Point[2]> >
-    class SmartFaceIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh5::index_type,Point[4],SmartIndex<Edge>[4]> >
+    class SmartNodeIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh::index_type,Point> >
+    class SmartEdgeIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh::index_type,Point[2]> >
+    class SmartFaceIterator : public std::iterator<std::forward_iterator_tag, SmartIndex<Mesh::index_type,Point[4],SmartIndex<Edge>[4]> >
   */
 
   // TODO: Being conservative with mesh synchronization flags until more
@@ -66,7 +66,7 @@ namespace Datatypes {
       else
       {
         //TODO: need to split out that Synchronize enum
-        vmesh_->synchronize(/*Mesh5::EDGES_E*/ 2);
+        vmesh_->synchronize(/*Mesh::EDGES_E*/ 2);
         vmesh_->end(iter_);
       }
       current_.setIndex(*iter_);
@@ -100,10 +100,14 @@ namespace Datatypes {
   {
   public:
     typedef typename VirtualMeshType::Edge::iterator iterator;
+    enum
+    {
+      sync_enum = 2
+    };
     explicit EdgeInfo(VirtualMeshType* mesh) : index_(0), vmesh_(mesh) 
     {
       //TODO: need to split out that Synchronize enum
-      vmesh_->synchronize(/*Mesh5::EDGES_E*/ 2);
+      vmesh_->synchronize(/*Mesh::EDGES_E*/ sync_enum);
     }
     void setIndex(typename VirtualMeshType::Edge::index_type i) { index_ = i; }
 
@@ -141,7 +145,14 @@ namespace Datatypes {
   {
   public:
     typedef typename VirtualMeshType::Face::iterator iterator;
-    explicit FaceInfo(VirtualMeshType* mesh) : index_(0), vmesh_(mesh) {}
+    enum
+    {
+      sync_enum = 4
+    };
+    explicit FaceInfo(VirtualMeshType* mesh) : index_(0), vmesh_(mesh) 
+    {
+      vmesh_->synchronize(/*Mesh::FACES_E*/ sync_enum);
+    }
     void setIndex(typename VirtualMeshType::Face::index_type i) { index_ = i; }
 
     typename VirtualMeshType::Face::index_type index() const { return index_; }
@@ -181,6 +192,10 @@ namespace Datatypes {
   {
   public:
     typedef typename VirtualMeshType::Node::iterator iterator;
+    enum
+    {
+      sync_enum = 1 << 8
+    };
     explicit NodeInfo(VirtualMeshType* mesh) : synched_(false), index_(0), vmesh_(mesh) {}
     void setIndex(typename VirtualMeshType::Node::index_type i) { index_ = i; }
 
@@ -196,8 +211,7 @@ namespace Datatypes {
       if (!synched_)
       {
         //TODO: need to split out that Synchronize enum
-        vmesh_->synchronize(/*Mesh5::NODE_NEIGHBORS_E*/ 1 << 8);
-        //vmesh_->synchronize(Mesh5::NODE_NEIGHBORS_E);
+        vmesh_->synchronize(/*Mesh::NODE_NEIGHBORS_E*/sync_enum);
         synched_ = true;
       }
       typename VirtualMeshType::Edge::array_type edgesFromNode(6);

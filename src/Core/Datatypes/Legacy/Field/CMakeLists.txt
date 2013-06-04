@@ -30,6 +30,7 @@ SET(Core_Datatypes_Legacy_Field_HEADERS
   CastFData.h
   CurveMesh.h
   Field.h
+  FieldFwd.h
   FieldIndex.h
   FieldInformation.h
   FieldIterator.h
@@ -66,7 +67,8 @@ SET(Core_Datatypes_Legacy_Field_SRCS
   cd_templates_fields_0.cc    	
   #cd_templates_fields_1.cc    	
   #cd_templates_fields_2.cc    	
-  #cd_templates_fields_3.cc    	
+  cd_templates_fields_3.cc    	
+  cd_templates_fields_3a.cc
   cd_templates_fields_4.cc    	
   #cd_templates_fields_5.cc	
   #cd_templates_fields_6.cc	
@@ -79,10 +81,10 @@ SET(Core_Datatypes_Legacy_Field_SRCS
   LatVolMesh.cc
   Mesh.cc		
   #PointCloudMesh.cc  
-  #PrismVolMesh.cc
+  PrismVolMesh.cc
   #QuadSurfMesh.cc
   #ScanlineMesh.cc
-  #TetVolMesh.cc
+  TetVolMesh.cc
   TriSurfMesh.cc
   VFData.cc	
   VFDataT_0.cc	

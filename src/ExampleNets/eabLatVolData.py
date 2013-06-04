@@ -17,14 +17,24 @@ report2 = addModule("ReportFieldInfo")
 addDataMod.output[0] >> report2.input[0]
 
 show = addModule("ShowField")
-view = addModule("ViewScene")
+
 
 latvolMod.output[0] >> addDataMod.input[0]
 addDataMod.output[0] >> show.input.Field
-show.output[0] >> view.input[0]
 
+view = addModule("ViewScene")
+show.output[0] >> view.input[0]
 view.showUI()
 
 executeAll()
+
+removeModule(view.id)
+
+view = addModule("ViewScene")
+show.output[0] >> view.input[0]
+view.showUI()
+
 executeAll()
-executeAll()
+
+#executeAll()
+#executeAll()

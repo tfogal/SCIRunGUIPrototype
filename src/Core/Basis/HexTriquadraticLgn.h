@@ -221,9 +221,9 @@ public:
   }
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str); 
-#endif
+
 };
 
 template <class T>
@@ -245,18 +245,9 @@ HexTriquadraticLgn<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int HEXTRIQUADRATICLGN_VERSION = 1;
-template <class T>
-void
-HexTriquadraticLgn<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     HEXTRIQUADRATICLGN_VERSION);
-  Pio(stream, this->nodes_);
-  stream.end_class();
-}
-#endif
+
+
+
 }}
 template <class T>
 const TypeDescription* get_type_description(Core::Basis::HexTriquadraticLgn<T> *)
@@ -272,6 +263,17 @@ const TypeDescription* get_type_description(Core::Basis::HexTriquadraticLgn<T> *
       TypeDescription::BASIS_E);
   }
   return td;
+}
+
+const int HEXTRIQUADRATICLGN_VERSION = 1;
+template <class T>
+void
+  Core::Basis::HexTriquadraticLgn<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    HEXTRIQUADRATICLGN_VERSION);
+  Pio(stream, this->nodes_);
+  stream.end_class();
 }
 }
 

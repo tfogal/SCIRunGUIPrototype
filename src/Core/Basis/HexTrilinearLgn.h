@@ -489,9 +489,9 @@ public:
   }
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 template <class T>
@@ -513,19 +513,9 @@ HexTrilinearLgn<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int HEX_TRILINEAR_LGN_VERSION = 1;
-template <class T>
-void
-HexTrilinearLgn<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     HEX_TRILINEAR_LGN_VERSION);
-  stream.end_class();
-}
-#endif
-
 }}
+const int HEX_TRILINEAR_LGN_VERSION = 1;
+
 template <class T>
 const TypeDescription* 
   get_type_description(Core::Basis::HexTrilinearLgn<T> *)
@@ -542,6 +532,15 @@ const TypeDescription*
   }
   return td;
 }
+  
+  template <class T>
+  void
+  Core::Basis::HexTrilinearLgn<T>::io(Piostream &stream)
+  {
+    stream.begin_class(get_type_description(this)->get_name(),
+                       HEX_TRILINEAR_LGN_VERSION);
+    stream.end_class();
+  }
 }
 
 #endif

@@ -26,7 +26,14 @@
    DEALINGS IN THE SOFTWARE.
 */
 
+#include <Core/Containers/StackVector.h>
+#include <Core/Datatypes/Legacy/Field/FieldRNG.h>
+#include <Core/Datatypes/Legacy/Field/FieldVIndex.h>
+#include <Core/Datatypes/Legacy/Field/FieldVIterator.h>
+#include <Core/GeometryPrimitives/Point.h>
+#include <Core/Datatypes/Legacy/Base/PropertyManager.h>
 
+#include <Core/Utils/Legacy/Debug.h>
 
 #include <Core/Datatypes/Legacy/Field/Mesh.h>
 #include <Core/Datatypes/Legacy/Field/VMesh.h>
@@ -38,11 +45,11 @@ using namespace SCIRun;
 using namespace SCIRun::Core::Geometry;
 using namespace SCIRun::Core::Thread;
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 // initialize the static member type_id
-PersistentTypeID Mesh::type_id("Mesh", "PropertyManager", NULL);
-#endif
+PersistentTypeID Mesh::type_id("Mesh", "Datatype", 0);
 
+Mesh::Mesh(const Mesh& copy) : Core::Datatypes::Datatype(copy) 
+{ DEBUG_CONSTRUCTOR("Mesh");  }
 
 namespace 
 {
@@ -373,7 +380,6 @@ Mesh::basis_order()
   return (-1);
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 const int MESHBASE_VERSION = 2;
 
 void 
@@ -387,7 +393,7 @@ Mesh::io(Piostream& stream)
   {
     stream.begin_class("Mesh", MESHBASE_VERSION);
   }
-  PropertyManager::io(stream);
+  PropertyManager().io(stream);
   stream.end_class();
 }
 
@@ -398,7 +404,6 @@ Mesh::type_name(int n)
   static const std::string name = "Mesh";
   return name;
 }
-#endif
 
 //! Return the transformation that takes a 0-1 space bounding box to
 //! the current bounding box of this mesh.
@@ -446,7 +451,7 @@ SCIRun::CreateMesh(const std::string& type)
 
 MeshHandle
 SCIRun::CreateMesh(const std::string& type,
-	   Mesh::size_type x, Mesh::size_type y, Mesh::size_type z,
+	   size_type x, size_type y, size_type z,
 	   const Point& min, const Point& max)
 {
   MeshHandle handle;
@@ -470,7 +475,7 @@ SCIRun::CreateMesh(const std::string& type,
 
 MeshHandle
 SCIRun::CreateMesh(const std::string& type,
-	   Mesh::size_type x, Mesh::size_type y,
+	   size_type x, size_type y,
 	   const Point& min, const Point& max)
 {
   MeshHandle handle;
@@ -493,7 +498,7 @@ SCIRun::CreateMesh(const std::string& type,
 }
 
 MeshHandle
-SCIRun::CreateMesh(const std::string& type, Mesh::size_type x,
+SCIRun::CreateMesh(const std::string& type, size_type x,
 	   const Point& min, const Point& max)
 {
   MeshHandle handle;
@@ -517,7 +522,7 @@ SCIRun::CreateMesh(const std::string& type, Mesh::size_type x,
 
 MeshHandle
 SCIRun::CreateMesh(const std::string& type,
-	   Mesh::size_type x, Mesh::size_type y, Mesh::size_type z)
+	   size_type x, size_type y, size_type z)
 {
   MeshHandle handle;
   if (MeshTypeIDMutex == NULL)
@@ -543,7 +548,7 @@ SCIRun::CreateMesh(const std::string& type,
 }
 
 MeshHandle
-SCIRun::CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y)
+SCIRun::CreateMesh(const std::string& type, size_type x, size_type y)
 {
   MeshHandle handle;
   if (MeshTypeIDMutex == NULL)
@@ -569,7 +574,7 @@ SCIRun::CreateMesh(const std::string& type, Mesh::size_type x, Mesh::size_type y
 }
 
 MeshHandle
-SCIRun::CreateMesh(const std::string& type, Mesh::size_type x)
+SCIRun::CreateMesh(const std::string& type, size_type x)
 {
   MeshHandle handle;
   if (MeshTypeIDMutex == NULL)

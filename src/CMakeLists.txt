@@ -501,7 +501,8 @@ INCLUDE_DIRECTORIES(
   ${SCI_BOOST_INCLUDE}
   ${SCIRun5Prototype_BINARY_DIR}/
   ${SCIRun5Prototype_BINARY_DIR}/include
-  ${SCIRun5Prototype_SOURCE_DIR}/Externals/eigen_3_1_1
+  ${SCIRun5Prototype_SOURCE_DIR}/Externals/eigen
+  ${SCIRun5Prototype_SOURCE_DIR}/Externals/log4cpp/include
 )
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
@@ -529,7 +530,6 @@ ADD_SUBDIRECTORY(Core)
 ADD_SUBDIRECTORY(Dataflow)
 ADD_SUBDIRECTORY(Modules)
 ADD_SUBDIRECTORY(Externals)
-ADD_SUBDIRECTORY(include)
 
 ADD_SUBDIRECTORY(Main)
 
@@ -538,6 +538,7 @@ ADD_SUBDIRECTORY(Testing)
 
 ########################################################################
 # sci_defs variables
+# TODO: temporarily included to support legacy code
 
 # sci_defs/error_defs.h
 SET(THROW_LEVEL 0 CACHE STRING "Set throw level N(0-3)")
@@ -604,6 +605,8 @@ ENDIF(HAVE_INTTYPES)
 SET(HAVE_SYS_UUID_H 0)
 SET(HAVE_UUID_UUID_H 0)
 
+ADD_SUBDIRECTORY(include)
+
 ########################################################################
 # Organize projects into folders for Visual Studio projects
 
@@ -631,8 +634,10 @@ SET_PROPERTY(TARGET Core_Datatypes_Legacy_Field         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_Datatypes_Legacy_Field_Tests   PROPERTY FOLDER "Core/Tests")
 SET_PROPERTY(TARGET Core_Basis         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_Basis_Tests   PROPERTY FOLDER "Core/Tests")
+SET_PROPERTY(TARGET Core_Persistent         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_Logging         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_Logging_Tests   PROPERTY FOLDER "Core/Tests")
+SET_PROPERTY(TARGET Core_ConsoleApplication         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_CommandLine         PROPERTY FOLDER "Core")
 SET_PROPERTY(TARGET Core_CommandLine_Tests   PROPERTY FOLDER "Core/Tests")
 SET_PROPERTY(TARGET Core_Command         PROPERTY FOLDER "Core")
@@ -697,6 +702,7 @@ SET_PROPERTY(TARGET Modules_Factory   PROPERTY FOLDER "Modules")
 
 SET_PROPERTY(TARGET Boost_external   PROPERTY FOLDER "Externals")
 SET_PROPERTY(TARGET Spire_external   PROPERTY FOLDER "Externals")
+SET_PROPERTY(TARGET log4cpp PROPERTY FOLDER "Externals")
 
 IF(BUILD_WITH_PYTHON)
   SET_PROPERTY(TARGET diagram PROPERTY FOLDER "Testing Support")

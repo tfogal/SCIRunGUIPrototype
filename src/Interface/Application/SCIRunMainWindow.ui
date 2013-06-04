@@ -82,6 +82,7 @@
     <addaction name="actionLoad_"/>
     <addaction name="recentNetworksMenu_"/>
     <addaction name="actionInsert_"/>
+    <addaction name="actionRunScript_"/>
     <addaction name="separator"/>
     <addaction name="actionSave_"/>
     <addaction name="actionSave_As_"/>
@@ -330,20 +331,6 @@
          </property>
          <item>
           <property name="text">
-           <string>ShowMesh</string>
-          </property>
-          <property name="whatsThis">
-           <string>This module takes a mesh object as input and outputs renderable geometry. Options are given for color, shading, etc.</string>
-          </property>
-          <property name="text">
-           <string>Some basic options available, still work in progress.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>ShowField</string>
           </property>
           <property name="font">
@@ -352,11 +339,11 @@
            </font>
           </property>
           <property name="text">
-           <string>Not working yet.</string>
+           <string>Some basic options available, still work in progress.</string>
           </property>
           <property name="font">
            <font>
-            <italic>true</italic>
+            <italic>false</italic>
            </font>
           </property>
           <property name="text">
@@ -374,6 +361,11 @@
          <property name="text">
           <string/>
          </property>
+         <item>
+          <property name="text">
+           <string>PrintDatatype</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>CreateString</string>
@@ -567,6 +559,11 @@
          </item>
          <item>
           <property name="text">
+           <string>WriteField</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>SendScalar</string>
           </property>
           <property name="text">
@@ -609,8 +606,20 @@
            <string/>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>ReadField</string>
+          </property>
+         </item>
         </item>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Network Miniview</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -1326,6 +1335,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionRunScript_">
+   <property name="text">
+    <string>Run Script...</string>
    </property>
   </action>
  </widget>

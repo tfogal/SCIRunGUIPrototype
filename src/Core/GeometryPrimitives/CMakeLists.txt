@@ -29,6 +29,7 @@
 SET(Core_GeometryPrimitives_SRCS
   BBox.cc
   CompGeom.cc
+  Plane.cc
   Point.cc
   SearchGridT.cc
   Tensor.cc
@@ -40,6 +41,7 @@ SET(Core_GeometryPrimitives_HEADERS
   BBox.h
   CompGeom.h
   GeomFwd.h
+  Plane.h
   Point.h
   PointVectorOperators.h
   SearchGridT.h
@@ -57,11 +59,13 @@ ADD_LIBRARY(Core_Geometry_Primitives
 TARGET_LINK_LIBRARIES(Core_Geometry_Primitives
   Core_Math
   Core_Util_Legacy
+  Core_Persistent
 )
 
 IF(BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DBUILD_Core_Geometry_Primitives)
 ENDIF(BUILD_SHARED_LIBS)
 
-ADD_SUBDIRECTORY(Tests)
+ADD_DEPENDENCIES(Core_Geometry_Primitives Boost_external)
 
+ADD_SUBDIRECTORY(Tests)

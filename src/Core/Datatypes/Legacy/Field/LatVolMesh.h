@@ -1054,7 +1054,6 @@ public:
 
   double get_epsilon() const;
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! Export this class using the old Pio system
   virtual void io(Piostream&);
   //! These IDs are created as soon as this class will be instantiated
@@ -1063,13 +1062,10 @@ public:
 private:
   static PersistentTypeID latvol_typeid;
   //! Core functionality for getting the name of a templated mesh class    
-#endif
 
 public:
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   virtual std::string dynamic_type_name() const { return latvol_typeid.type; }
-#endif
 
   // Unsafe due to non-constness of unproject.
   Core::Geometry::Transform &get_transform() { return transform_; }
@@ -1094,10 +1090,8 @@ public:
   static const TypeDescription* elem_type_description()
   { return cell_type_description(); }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   //! This function returns a maker for Pio.
   static Persistent *maker() { return new LatVolMesh(); }
-#endif
   //! This function returns a handle for the virtual interface.
   static MeshHandle mesh_maker() { return boost::make_shared<LatVolMesh>(); }
   //! This function returns a handle for the virtual interface.
@@ -1227,11 +1221,10 @@ LatVolMesh<Basis>::cell_type_description()
   }
   return td;
 }
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
 template <class Basis>
 PersistentTypeID
 LatVolMesh<Basis>::latvol_typeid(type_name(-1), "Mesh", LatVolMesh<Basis>::maker);
-#endif
 
 template <class Basis>
 LatVolMesh<Basis>::LatVolMesh(size_type i, size_type j, size_type k,
@@ -2378,7 +2371,6 @@ find_type_name(typename LatVolMesh<Basis>::CellIndex *)
   return name;
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 #define LATVOLMESH_VERSION 5
 
 template <class Basis>
@@ -2438,12 +2430,10 @@ LatVolMesh<Basis>::io(Piostream& stream)
   if (stream.reading())
   {
     compute_jacobian();
-    vmesh_ = CreateVLatVolMesh(this);
+    vmesh_.reset(CreateVLatVolMesh(this));
   }
 
 }
-
-#endif
 
 template <class Basis>
 const std::string

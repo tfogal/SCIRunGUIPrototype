@@ -65,24 +65,22 @@ bool QuitCommandGui::execute()
   return true;
 }
 
-bool PrintHelpGui::execute()
+bool ShowMainWindowGui::execute()
 {
-  std::cout << Application::Instance().commandHelpString() << std::endl;
+  auto mainWin = SCIRunMainWindow::Instance();
+  mainWin->activateWindow();
+  
+  mainWin->raise();
+  mainWin->show();
   return true;
 }
 
-bool PrintVersionGui::execute()
-{
-  std::cout << Application::Instance().version() << std::endl;
-  return true;
-}
-
-ShowMainWindowGui::ShowMainWindowGui() 
+ShowSplashScreenGui::ShowSplashScreenGui() 
 {
   initSplashScreen();
 }
 
-bool ShowMainWindowGui::execute()
+bool ShowSplashScreenGui::execute()
 {
   splash_->show();
 
@@ -90,15 +88,10 @@ bool ShowMainWindowGui::execute()
   splash_->showMessage("Welcome! Tip: Press F1 and click anywhere in the interface for helpful hints.", Qt::AlignBottom, Qt::white);
   qApp->processEvents();
 
-  auto mainWin = SCIRunMainWindow::Instance();
-  mainWin->activateWindow();
-
-  mainWin->raise();
-  mainWin->show();
   return true;
 }
 
-void ShowMainWindowGui::initSplashScreen()
+void ShowSplashScreenGui::initSplashScreen()
 {
   splash_ = new QSplashScreen(0, QPixmap(":/gear/splash-scirun.png"),  Qt::WindowStaysOnTopHint);
   splashTimer_ = new QTimer;
@@ -107,8 +100,8 @@ void ShowMainWindowGui::initSplashScreen()
   QObject::connect( splashTimer_, SIGNAL( timeout() ), splash_, SLOT( close() ));
 }
 
-QSplashScreen* ShowMainWindowGui::splash_ = 0;
-QTimer* ShowMainWindowGui::splashTimer_ = 0;
+QSplashScreen* ShowSplashScreenGui::splash_ = 0;
+QTimer* ShowSplashScreenGui::splashTimer_ = 0;
 
 bool FileOpenCommand::execute()
 {

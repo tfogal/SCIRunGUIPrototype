@@ -28,12 +28,11 @@
 
 #include <Modules/Visualization/ShowField.h>
 #include <Core/Datatypes/Geometry.h>
-#include <Core/Datatypes/Mesh/VMesh.h>
-#include <Core/Datatypes/Mesh/Mesh.h>
 #include <Core/Datatypes/Legacy/Field/VMesh.h>
-#include <Core/Datatypes/Legacy/Field/Mesh.h>
 #include <Core/Datatypes/Legacy/Field/Field.h>
+#include <Core/Datatypes/Legacy/Field/VField.h>
 #include <Core/Datatypes/Mesh/MeshFacade.h>
+#include <Core/Datatypes/Color.h>
 
 #include <boost/foreach.hpp>
 
@@ -50,6 +49,7 @@ namespace SCIRun {
       class ShowFieldModuleImpl
       {
       public:
+        explicit ShowFieldModuleImpl(SCIRun::Core::Algorithms::AlgorithmStatusReporter::UpdaterFunc updater) : updater_(updater) {}
         GeometryHandle renderMesh(boost::shared_ptr<SCIRun::Field> field,
           ModuleStateHandle state, 
           const std::string& id);
@@ -78,16 +78,15 @@ namespace SCIRun {
           SCIRun::Core::Datatypes::GeometryHandle geom,
           const std::string& primaryVBOName,
           ModuleStateHandle state);
+
+        SCIRun::Core::Algorithms::AlgorithmStatusReporter::UpdaterFunc updater_;
       };
 
     }}}
 
 ShowFieldModule::ShowFieldModule() : Module(ModuleLookupInfo("ShowField", "Visualization", "SCIRun")),
-  impl_(new ShowFieldModuleImpl)
+  impl_(new ShowFieldModuleImpl(getUpdaterFunc()))
 {
-  get_state()->setValue(ShowNodes, false);
-  get_state()->setValue(ShowEdges, true);
-  get_state()->setValue(ShowFaces, true);
 }
 
 void ShowFieldModule::execute()
@@ -117,6 +116,12 @@ void ShowFieldModule::execute()
 
   } 
   */
+
+  {
+    //TODO
+    ColorRGB color = any_cast_or_default<ColorRGB>(get_state()->getTransientValue(DefaultMeshColor.name_));
+    std::cout << "Default mesh color is: " << color << std::endl;
+  }
 
   GeometryHandle geom = impl_->renderMesh(field, get_state(), get_id());
 
@@ -177,24 +182,36 @@ GeometryHandle ShowFieldModuleImpl::renderMesh(
   attribs.push_back("aFieldData");
   geom->mVBOs.emplace_back(GeometryObject::SpireVBO(primVBOName, attribs, rawVBO));
 
+  if (updater_)
+    updater_(0.1);
+
   // Build vertex buffer.
   size_t i = 0;
   BOOST_FOREACH(const NodeInfo<VMesh>& node, facade->nodes())
   {
     vbo[i+0] = node.point().x(); vbo[i+1] = node.point().y(); vbo[i+2] = node.point().z();
 
-    double val = 0.0;
-    vfield->get_value(val, node.index());
-    vbo[i+3] = static_cast<float>(val);
-    std::cout << static_cast<float>(val) << std::endl;
+    if (node.index() < vfield->num_values())
+    {
+      double val = 0.0;
+      vfield->get_value(val, node.index());
+      vbo[i+3] = static_cast<float>(val);
+    }
+    //std::cout << static_cast<float>(val) << std::endl;
     i+=4;
   }
+
+  if (updater_)
+    updater_(0.25);
 
   // Build the edges
   if (showEdges)
   {
     buildEdgesNoNormals<VMesh>(facade, geom, primVBOName, state);
   }
+
+  if (updater_)
+    updater_(0.5);
 
   // Build the faces
   if (showFaces)
@@ -206,11 +223,18 @@ GeometryHandle ShowFieldModuleImpl::renderMesh(
     buildFacesNoNormals<VMesh>(facade, geom, primVBOName, dataMin, dataMax, state);
   }
 
+  if (updater_)
+    updater_(0.75);
+
   // Build the nodes
   if (showNodes)
   {
     buildNodesNoNormals<VMesh>(facade, geom, primVBOName, state);
   }
+
+  if (updater_)
+    updater_(1);
+
   return geom;
 }
 
@@ -383,9 +407,10 @@ void ShowFieldModuleImpl::buildNodesNoNormals(typename SCIRun::Core::Datatypes::
   geom->mPasses.emplace_back(pass);
 }
 
-AlgorithmParameterName ShowFieldModule::ShowNodes("Show nodes");
-AlgorithmParameterName ShowFieldModule::ShowEdges("Show edges");
-AlgorithmParameterName ShowFieldModule::ShowFaces("Show faces");
-AlgorithmParameterName ShowFieldModule::NodeTransparency("Node Transparency");
-AlgorithmParameterName ShowFieldModule::EdgeTransparency("Edge Transparency");
-AlgorithmParameterName ShowFieldModule::FaceTransparency("Face Transparency");
+AlgorithmParameterName ShowFieldModule::ShowNodes("ShowNodes");
+AlgorithmParameterName ShowFieldModule::ShowEdges("ShowEdges");
+AlgorithmParameterName ShowFieldModule::ShowFaces("ShowFaces");
+AlgorithmParameterName ShowFieldModule::NodeTransparency("NodeTransparency");
+AlgorithmParameterName ShowFieldModule::EdgeTransparency("EdgeTransparency");
+AlgorithmParameterName ShowFieldModule::FaceTransparency("FaceTransparency");
+AlgorithmParameterName ShowFieldModule::DefaultMeshColor("DefaultMeshColor");

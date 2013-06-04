@@ -113,9 +113,9 @@ public:
   }
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str); 
-#endif
+
 };
 
 
@@ -142,18 +142,9 @@ NoDataBasis<T>::type_name(int n)
 
 
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
 #define NODATABASIS_VERSION 1
 
-template <class T>
-void
-NoDataBasis<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     NODATABASIS_VERSION);
-  stream.end_class();
-}
-#endif
 
 }}
 template <class T>
@@ -172,6 +163,15 @@ const TypeDescription* get_type_description(Core::Basis::NoDataBasis<T> *)
   }
   return td;
 }
+  
+  template <class T>
+  void
+  Core::Basis::NoDataBasis<T>::io(Piostream &stream)
+  {
+    stream.begin_class(get_type_description(this)->get_name(),
+                       NODATABASIS_VERSION);
+    stream.end_class();
+  }
 }
 
 #endif

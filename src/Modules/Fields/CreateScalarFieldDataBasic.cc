@@ -28,20 +28,25 @@
 
 #include <Modules/Fields/CreateScalarFieldDataBasic.h>
 #include <Core/Datatypes/Legacy/Field/Field.h>
+#include <Core/Datatypes/Legacy/Field/VField.h>
+#include <Core/Datatypes/Legacy/Field/VMesh.h>
 
 #include <Core/Algorithms/Base/AlgorithmPreconditions.h>
 
 using namespace SCIRun::Modules::Fields;
 using namespace SCIRun::Dataflow::Networks;
 using namespace SCIRun::Core::Algorithms;
+using namespace SCIRun::Core::Geometry;
 
-AlgorithmParameterName CreateScalarFieldDataBasic::DataMap("DataMap");
+AlgorithmParameterName CreateScalarFieldDataBasic::ValueFunc("ValueFunc");
+AlgorithmParameterName CreateScalarFieldDataBasic::ValueFuncParam1("ValueFuncParam1");
 
 CreateScalarFieldDataBasic::CreateScalarFieldDataBasic()
   : Module(ModuleLookupInfo("CreateScalarFieldDataBasic", "NewField", "SCIRun"), false)
 {
 }
 
+//TODO: expand this module and then move it to test module category. then it can be used with python to regression test many combinations of latvol visualization!
 void CreateScalarFieldDataBasic::execute()
 {
   auto field = getRequiredInput(InputField);
@@ -51,11 +56,11 @@ void CreateScalarFieldDataBasic::execute()
 
   if (vfield && vmesh)
   {
-    std::cout << "Assuming values on nodes." << std::endl;
+    //std::cout << "Assuming values on nodes." << std::endl;
     {
       if (vmesh->is_latvolmesh())
       {
-        std::cout << "Assuming latvol mesh" << std::endl;
+        //std::cout << "Assuming latvol mesh" << std::endl;
 
         std::vector<index_type> dims;
         vmesh->get_dimensions(dims);
@@ -69,23 +74,67 @@ void CreateScalarFieldDataBasic::execute()
 
         double value = 0;
         auto numNodes = vmesh->num_nodes();
+        static int mult = 1;
         for (; meshNodeIter != meshNodeEnd; ++meshNodeIter)
         {
           // get edges and point from mesh node
 
           VMesh::Node::index_type nodeID = *meshNodeIter;
           vfield->set_value(value, nodeID);
-          std::cout << "Set value " << value << " at node " << nodeID << std::endl;
-          if ((nodeID + 1) % nodesPerPlane == 0)
+
+          //std::cout << "Set value " << value << " at node " << nodeID << std::endl;
+
+          // by node id
+          auto valueFuncName = get_state()->getValue(ValueFunc).getString();
+          if (valueFuncName == "byPlane")
           {
-            value += 1;
+            if ((nodeID + 1) % nodesPerPlane == 0)
+            {
+              value += 1;
+            }
           }
+          else if (valueFuncName == "random")
+          {
+            value = rand() / 1000;
+          }
+          else if (valueFuncName == "x+y+z")
+          {
+            Point p;
+            vmesh->get_point(p, nodeID);
+            value = p.x() + p.y() + p.z();
+          }
+          else if (valueFuncName == "distance")
+          {
+            Point p;
+            vmesh->get_point(p, nodeID);
+            value = Dot(p, p);
+          }
+          else if (valueFuncName == "sine")
+          {
+            //int mult = get_state()->getValue(ValueFuncParam1).getInt();
+            Point p;
+            vmesh->get_point(p, nodeID);
+            value = sin(Dot(p,p)*mult);
+          }
+          else
+          {
+            Point p;
+            vmesh->get_point(p, nodeID);
+            value = sin(Dot(p,p)*10);
+          }
+
+
         }
+        mult += 2;
       }
     }
   }
   else
     error("VField object is null");
+  
+
 
   sendOutput(OutputFieldWithData, field);
 }
+
+

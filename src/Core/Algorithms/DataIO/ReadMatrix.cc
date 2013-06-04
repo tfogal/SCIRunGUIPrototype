@@ -70,13 +70,26 @@ ReadMatrixAlgorithm::Outputs ReadMatrixAlgorithm::run(const ReadMatrixAlgorithm:
     std::ifstream reader(filename.c_str());
     DenseMatrixHandle matrix(boost::make_shared<DenseMatrix>());
     reader >> *matrix;
+
+    //std::cout << "ALGO OUTPUT:\n" << *matrix << std::endl;
+
     return matrix;
   }
   else if (boost::filesystem::extension(filename) == ".mat")
   {
-    status("FOUND .mat file: assuming is SCIRUNv4 ASCII format.");
-    internal::EigenMatrixFromScirunAsciiFormatConverter conv(this);
-    return conv.make(filename);
+    status("FOUND .mat file: assuming is SCIRUNv4 Matrix format.");
+
+    PiostreamPtr stream = auto_istream(filename);
+    if (!stream)
+    {
+      THROW_ALGORITHM_PROCESSING_ERROR("Error reading file '" + filename + "'.");
+    }
+
+    MatrixHandle matrix;
+    Pio(*stream, matrix);
+    if (!matrix)
+      THROW_ALGORITHM_PROCESSING_ERROR("Import failed.");
+    return matrix;
   }
   THROW_ALGORITHM_INPUT_ERROR("Unknown matrix file format");
 }

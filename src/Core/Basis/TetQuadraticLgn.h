@@ -172,9 +172,9 @@ public:
 
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 
@@ -197,18 +197,9 @@ TetQuadraticLgn<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int TETQUADRATICLGN_VERSION = 1;
-template <class T>
-void
-TetQuadraticLgn<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     TETQUADRATICLGN_VERSION);
-  Pio(stream, this->nodes_);
-  stream.end_class();
-}
-#endif
+
+
+
 }}
 template <class T>
 const TypeDescription* get_type_description(Core::Basis::TetQuadraticLgn<T> *)
@@ -225,6 +216,18 @@ const TypeDescription* get_type_description(Core::Basis::TetQuadraticLgn<T> *)
   }
   return td;
 }
+
+const int TETQUADRATICLGN_VERSION = 1;
+template <class T>
+void
+  Core::Basis::TetQuadraticLgn<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    TETQUADRATICLGN_VERSION);
+  Pio(stream, this->nodes_);
+  stream.end_class();
+}
+
 }
 
 #endif

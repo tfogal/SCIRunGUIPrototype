@@ -347,9 +347,9 @@ public:
   }  
 
   static const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 
@@ -373,17 +373,9 @@ CrvLinearLgn<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int CRVLINEARLGN_VERSION = 1;
-template <class T>
-void
-CrvLinearLgn<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     CRVLINEARLGN_VERSION);
-  stream.end_class();
-}
-#endif
+
+
+
 
 }}
 
@@ -401,6 +393,16 @@ const TypeDescription* get_type_description(Core::Basis::CrvLinearLgn<T> *)
       TypeDescription::BASIS_E);
   }
   return td;
-}}
+}
+const int CRVLINEARLGN_VERSION = 1;
+template <class T>
+void
+  Core::Basis::CrvLinearLgn<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    CRVLINEARLGN_VERSION);
+  stream.end_class();
+}
+}
 
 #endif

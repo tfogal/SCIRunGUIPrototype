@@ -196,9 +196,9 @@ public:
   }
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 
@@ -223,19 +223,10 @@ TetCubicHmt<T>::type_name(int n)
     return find_type_name((T *)0);
   }
 }
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
 
-const int TETCUBICHMT_VERSION = 1;
-template <class T>
-void
-TetCubicHmt<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     TETCUBICHMT_VERSION);
-  Pio(stream, this->derivs_);
-  stream.end_class();
-}
-#endif
+
+
+
 }}
 template <class T>
 const TypeDescription* get_type_description(Core::Basis::TetCubicHmt<T> *)
@@ -251,6 +242,17 @@ const TypeDescription* get_type_description(Core::Basis::TetCubicHmt<T> *)
       TypeDescription::BASIS_E);
   }
   return td;
+}
+
+const int TETCUBICHMT_VERSION = 1;
+template <class T>
+void
+  Core::Basis::TetCubicHmt<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    TETCUBICHMT_VERSION);
+  Pio(stream, this->derivs_);
+  stream.end_class();
 }
 }
 

@@ -32,6 +32,7 @@
 #include <Core/Datatypes/DenseColumnMatrix.h>
 
 using namespace SCIRun::Core::Datatypes;
+using namespace SCIRun;
 
 DenseMatrixHandle matrix_cast::as_dense(const MatrixHandle& mh)
 {

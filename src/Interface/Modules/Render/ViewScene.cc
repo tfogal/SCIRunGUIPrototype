@@ -29,7 +29,7 @@
 #include <Interface/Modules/Render/ViewScene.h>
 #include <Dataflow/Network/ModuleStateInterface.h>
 #include <Core/Datatypes/Geometry.h>
-#include <QFileDialog>
+#include <QtGui>
 #include "QtGLContext.h"
 
 using namespace SCIRun::Gui;
@@ -44,6 +44,8 @@ ViewSceneDialog::ViewSceneDialog(const std::string& name, ModuleStateHandle stat
   setupUi(this);
   setWindowTitle(QString::fromStdString(name));
 
+  addToolBar();
+  
   // Setup Qt OpenGL widget.
   QGLFormat fmt;
   fmt.setAlpha(true);
@@ -196,4 +198,14 @@ void ViewSceneDialog::moduleExecuted()
       }
     }
   }
+}
+
+void ViewSceneDialog::addToolBar() 
+{
+  auto tools = new QToolBar(this);
+  auto menu = new QComboBox(this);
+  menu->addItem("Legacy Mouse Control");
+  menu->addItem("New Mouse Control");
+  tools->addWidget(menu);
+  glLayout->addWidget(tools);
 }

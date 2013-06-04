@@ -265,11 +265,10 @@ namespace Modules
   struct SCISHARE MatrixPortTag {};
   struct SCISHARE ScalarPortTag {};
   struct SCISHARE StringPortTag {};
-  struct SCISHARE Field5PortTag {};
-  struct SCISHARE Mesh5PortTag {}; //TODO temporary
   struct SCISHARE FieldPortTag {};
   struct SCISHARE MeshPortTag {}; //TODO temporary
   struct SCISHARE GeometryPortTag {};
+  struct SCISHARE DatatypePortTag {};
 
   inline SCIRun::Dataflow::Networks::PortDescription MakeMatrixPort(const std::string& name)
   {
@@ -284,16 +283,6 @@ namespace Modules
   inline SCIRun::Dataflow::Networks::PortDescription MakeStringPort(const std::string& name)
   {
     return SCIRun::Dataflow::Networks::PortDescription(name, "String", "darkGreen"); 
-  }
-
-  inline SCIRun::Dataflow::Networks::PortDescription MakeField5Port(const std::string& name)
-  {
-    return SCIRun::Dataflow::Networks::PortDescription(name, "Field5", "darkYellow"); 
-  }
-
-  inline SCIRun::Dataflow::Networks::PortDescription MakeMesh5Port(const std::string& name)
-  {
-    return SCIRun::Dataflow::Networks::PortDescription(name, "Mesh5", "darkCyan"); 
   }
 
   inline SCIRun::Dataflow::Networks::PortDescription MakeFieldPort(const std::string& name)
@@ -311,6 +300,11 @@ namespace Modules
     return SCIRun::Dataflow::Networks::PortDescription(name, "Geometry", "magenta"); 
   }
 
+  inline SCIRun::Dataflow::Networks::PortDescription MakeDatatypePort(const std::string& name)
+  {
+    return SCIRun::Dataflow::Networks::PortDescription(name, "Datatype", "black"); 
+  }
+
 #define INPUT_PORT_SPEC(name)   template <>\
   class Has1InputPort<name ##PortTag>\
   {\
@@ -324,11 +318,10 @@ namespace Modules
   INPUT_PORT_SPEC(Matrix);
   INPUT_PORT_SPEC(Scalar);
   INPUT_PORT_SPEC(String);
-  INPUT_PORT_SPEC(Field5);
-  INPUT_PORT_SPEC(Mesh5);  //TODO temporary
   INPUT_PORT_SPEC(Field);
   INPUT_PORT_SPEC(Mesh);  //TODO temporary
   INPUT_PORT_SPEC(Geometry);
+  INPUT_PORT_SPEC(Datatype);
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -367,9 +360,8 @@ namespace Modules
   OUTPUT_PORT_SPEC(String);
   OUTPUT_PORT_SPEC(Field);
   OUTPUT_PORT_SPEC(Mesh);  //TODO temporary
-  OUTPUT_PORT_SPEC(Field5);
-  OUTPUT_PORT_SPEC(Mesh5);  //TODO temporary
   OUTPUT_PORT_SPEC(Geometry);
+  OUTPUT_PORT_SPEC(Datatype);
 
 #define ATTACH_NAMESPACE(type) Core::Datatypes::type
 

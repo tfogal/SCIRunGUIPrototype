@@ -27,6 +27,7 @@
 #
 
 SET(Core_Datatypes_SRCS
+  Color.cc
   Datatype.cc
   Geometry.cc
   Matrix.cc
@@ -36,6 +37,7 @@ SET(Core_Datatypes_SRCS
 )
 
 SET(Core_Datatypes_HEADERS
+  Color.h
   Datatype.h
   DatatypeFwd.h
   DenseMatrix.h
@@ -50,17 +52,16 @@ SET(Core_Datatypes_HEADERS
   Share.h
   SparseRowMatrix.h
   String.h
-  Types.h
 )
 
 # Spire related includes (required for linking on windows)
 FIND_PACKAGE(OpenGL REQUIRED)
-if(UNIX)
-  if(APPLE)
-    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
-    set(SCI_SPIRE_EXTRA_LIBRARIES ${CORE_FOUNDATION_FRAMEWORK})
-  endif()
-endif()
+IF(UNIX)
+  IF(APPLE)
+    FIND_LIBRARY(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+    SET(SCI_SPIRE_EXTRA_LIBRARIES ${CORE_FOUNDATION_FRAMEWORK})
+  ENDIF()
+ENDIF()
 
 ADD_LIBRARY(Core_Datatypes 
   ${Core_Datatypes_HEADERS}
@@ -68,14 +69,18 @@ ADD_LIBRARY(Core_Datatypes
 )
 
 TARGET_LINK_LIBRARIES(Core_Datatypes
+  Core_Persistent
+  Core_Datatypes_Legacy_Base
   ${OPENGL_LIBRARIES}
   ${SCI_SPIRE_LIBRARY}
   ${SCI_SPIRE_EXTRA_LIBRARIES}
-  )
+)
 
 IF(BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DBUILD_Core_Datatypes)
 ENDIF(BUILD_SHARED_LIBS)
+
+ADD_DEPENDENCIES(Core_Datatypes Boost_external)
 
 ADD_SUBDIRECTORY(Tests)
 ADD_SUBDIRECTORY(Mesh)

@@ -37,7 +37,7 @@
 #ifndef CORE_BASIS_TRICUBICHMTSCALEFACTORS_H
 #define CORE_BASIS_TRICUBICHMTSCALEFACTORS_H 1
 
-//#include <Core/Persistent/PersistentSTL.h>
+#include <Core/Persistent/PersistentSTL.h>
 #include <Core/Basis/TriLinearLgn.h>
 
 namespace SCIRun {
@@ -244,9 +244,9 @@ public:
 
   static const std::string type_name(int n = -1);
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str); 
-#endif
+
 };
 
 
@@ -272,19 +272,9 @@ TriCubicHmtScaleFactors<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int TRICUBICHMTSCALEFACTORS_VERSION = 1;
-template <class T>
-void
-  TriCubicHmtScaleFactors<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     TRICUBICHMTSCALEFACTORS_VERSION);
-  Pio(stream, this->derivs_);
-  Pio(stream, this->scalefactors_);
-  stream.end_class();
-}
-#endif
+
+
+
 
 }}
 
@@ -302,6 +292,18 @@ const TypeDescription* get_type_description(Core::Basis::TriCubicHmtScaleFactors
       TypeDescription::BASIS_E);
   }
   return td;
+}
+
+const int TRICUBICHMTSCALEFACTORS_VERSION = 1;
+template <class T>
+void
+  Core::Basis::TriCubicHmtScaleFactors<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    TRICUBICHMTSCALEFACTORS_VERSION);
+  Pio(stream, this->derivs_);
+  Pio(stream, this->scalefactors_);
+  stream.end_class();
 }
 }
 

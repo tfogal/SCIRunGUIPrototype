@@ -100,6 +100,7 @@ private:
   QStringList recentFiles_;
   QString currentFile_;
   QDir latestNetworkDirectory_;
+  bool firstTimePythonShown_;
   boost::shared_ptr<class NetworkExecutionProgressBar> networkProgressBar_;
   boost::shared_ptr<class GuiActionProvenanceConverter> commandConverter_;
   boost::shared_ptr<class DefaultNotePositionGetter> defaultNotePositionGetter_;
@@ -112,6 +113,7 @@ private Q_SLOTS:
   void loadNetwork();
   void loadRecentNetwork();
   bool newNetwork();
+  void runScript();
   void networkModified();
   void filterModuleNamesInTreeView(const QString& start);
   void makePipesEuclidean();
@@ -125,6 +127,7 @@ private Q_SLOTS:
   void setExecutor(int type);
   void readDefaultNotePosition(int index);
   void updateMiniView();
+  void showPythonWarning(bool visible);
   void exitApplication(int code);
 };
 

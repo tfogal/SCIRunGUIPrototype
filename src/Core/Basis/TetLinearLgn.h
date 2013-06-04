@@ -32,7 +32,7 @@
 #ifndef CORE_BASIS_TETLINEARLGN_H
 #define CORE_BASIS_TETLINEARLGN_H 1
 
-#include <float.h>
+#include <cfloat>
 
 #include <Core/Basis/TetElementWeights.h>
 #include <Core/Basis/TetSamplingSchemes.h>
@@ -462,9 +462,9 @@ public:
 
 
   static  const std::string type_name(int n = -1);
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
+
   virtual void io (Piostream& str);
-#endif
+
 };
 
 
@@ -489,17 +489,9 @@ TetLinearLgn<T>::type_name(int n)
   }
 }
 
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
-const int TETLINEARLGN_VERSION = 1;
-template <class T>
-void
-TetLinearLgn<T>::io(Piostream &stream)
-{
-  stream.begin_class(get_type_description(this)->get_name(),
-                     TETLINEARLGN_VERSION);
-  stream.end_class();
-}
-#endif
+
+
+
 }}
 
 template <class T>
@@ -516,6 +508,16 @@ const TypeDescription* get_type_description(Core::Basis::TetLinearLgn<T> *)
       TypeDescription::BASIS_E);
   }
   return td;
+}
+
+const int TETLINEARLGN_VERSION = 1;
+template <class T>
+void
+  Core::Basis::TetLinearLgn<T>::io(Piostream &stream)
+{
+  stream.begin_class(get_type_description(this)->get_name(),
+    TETLINEARLGN_VERSION);
+  stream.end_class();
 }
 }
 

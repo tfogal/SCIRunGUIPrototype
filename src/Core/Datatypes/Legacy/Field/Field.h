@@ -31,16 +31,8 @@
 #ifndef CORE_DATATYPES_LEGACY_FIELD_H
 #define CORE_DATATYPES_LEGACY_FIELD_H 1
 
-#include <Core/Datatypes/Legacy/Base/PropertyManager.h>
-#include <Core/Datatypes/Legacy/Field/Mesh.h>
-#include <Core/Datatypes/Legacy/Field/VMesh.h>
-#include <Core/Datatypes/Legacy/Field/VField.h>
-
-#include <Core/Utils/Legacy/Debug.h>
-#include <Core/Utils/Legacy/ProgressReporter.h>
-
 #include <Core/Datatypes/Datatype.h>
-
+#include <Core/Datatypes/Legacy/Field/FieldFwd.h>
 #include <Core/Datatypes/Legacy/Field/share.h>
 
 namespace SCIRun {
@@ -49,8 +41,7 @@ class SCISHARE Field: public Core::Datatypes::Datatype
 {
   public:
     Field();
-    Field(const Field& copy) : Core::Datatypes::Datatype(copy) 
-      { DEBUG_CONSTRUCTOR("Field");  }
+    Field(const Field& copy);
     virtual ~Field();
     
     //! Clone field will generate a pointer to a new copy
@@ -87,12 +78,10 @@ class SCISHARE Field: public Core::Datatypes::Datatype
 
     virtual const TypeDescription* get_type_description(td_info_e td = FULL_TD_E) const = 0; 
     
-#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
     //! Persistent I/O.
     static  PersistentTypeID type_id;
     virtual void io(Piostream &stream);
-    virtual std::string type_name() const { return type_id.type; }    
-#endif
+    virtual std::string type_name() const;
 };
 
 
@@ -110,6 +99,21 @@ class SCISHARE FieldTypeID {
 
 SCISHARE FieldHandle CreateField(const std::string& type);
 SCISHARE FieldHandle CreateField(const std::string& type,MeshHandle mesh);
+
+SCISHARE FieldHandle CreateField(const std::string& meshtype, const std::string& basistype, const std::string& datatype);
+SCISHARE FieldHandle CreateField(const std::string& meshtype, const std::string& meshbasistype, const std::string& databasistype, const std::string& datatype);
+
+SCISHARE FieldHandle CreateField(mesh_info_type mesh, 
+  meshbasis_info_type meshbasis, 
+  databasis_info_type databasis, 
+  data_info_type data);
+
+SCISHARE FieldHandle CreateField(mesh_info_type mesh,
+  databasis_info_type databasis, 
+  data_info_type data);
+
+SCISHARE FieldHandle CreateField(FieldInformation &info);
+SCISHARE FieldHandle CreateField(FieldInformation &info,MeshHandle mesh);
 
 }
 

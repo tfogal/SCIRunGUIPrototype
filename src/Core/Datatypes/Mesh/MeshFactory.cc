@@ -31,17 +31,18 @@
 ///////////////////////////
 
 #include <Core/Datatypes/Mesh/MeshFactory.h>
-#include <Core/Datatypes/Mesh/FieldInformation.h>
-#include <Core/Datatypes/Mesh/Mesh.h>
+//#include <Core/Datatypes/Mesh/FieldInformation.h>
+//#include <Core/Datatypes/Mesh/Mesh.h>
 #include <Core/Datatypes/Mesh/LatticeVolumeMeshRegister.h>
 #include <Core/Datatypes/Mesh/TriSurfMeshRegister.h>
 #include <Core/GeometryPrimitives/Point.h>
 
+using namespace SCIRun;
 using namespace SCIRun::Core::Datatypes;
 using namespace SCIRun::Core::Geometry;
 using namespace SCIRun::Core::Utility;
 
-MeshConstructionParameters::MeshConstructionParameters(Mesh5::size_type x, Mesh5::size_type y, Mesh5::size_type z, const Point& min, const Point& max)
+MeshConstructionParameters::MeshConstructionParameters(size_type x, size_type y, size_type z, const Point& min, const Point& max)
   : x_(x), y_(y), z_(z), min_(min), max_(max) {}
 
 CORE_SINGLETON_IMPLEMENTATION( MeshFactory )
@@ -49,41 +50,44 @@ CORE_SINGLETON_IMPLEMENTATION( MeshRegistry )
 
 MeshFactory::MeshFactory() : registry_(MeshRegistry::Instance())
 {
+#ifdef SCIRUN4_CODE_TO_BE_ENABLED_LATER
   SCIRun::Core::Datatypes::registerLatticeVolumeMesh();
   SCIRun::Core::Datatypes::registerTriSurfMeshes();
   //fill in all mesh types here, via their basic register functions.
+#endif
 }
 
 MeshRegistry::MeshRegistry()
 {
 }
 
-MeshHandle5 MeshFactory::CreateMesh(const Field5Information& info, const MeshConstructionParameters& params)
+/*
+MeshHandle MeshFactory::CreateMesh(const FieldInformation& info, const MeshConstructionParameters& params)
 {
   std::string type = info.get_mesh_type_id();
   return CreateMesh(type, params);
 }
 
-MeshHandle5 MeshFactory::CreateMesh(const Field5Information& info)
+MeshHandle MeshFactory::CreateMesh(const FieldInformation& info)
 {
   std::string type = info.get_mesh_type_id();
   return CreateMesh(type);
 }
-
-MeshHandle5 MeshFactory::CreateMesh(const std::string& type)
+*/
+MeshHandle MeshFactory::CreateMesh(const std::string& type)
 {
   auto ctorInfo = registry_.meshTypeIdLookup_.findConstructorInfo(type);
   if (ctorInfo)
     return ctorInfo->defCtor_();
-  return MeshHandle5();
+  return MeshHandle();
 }
 
-MeshHandle5 MeshFactory::CreateMesh(const std::string& type, const MeshConstructionParameters& params)
+MeshHandle MeshFactory::CreateMesh(const std::string& type, const MeshConstructionParameters& params)
 {
   auto ctorInfo = registry_.meshTypeIdLookup_.findConstructorInfo(type);
   if (ctorInfo)
     return ctorInfo->ctor_(params);
-  return MeshHandle5();
+  return MeshHandle();
 }
 
 MeshRegistry::MeshTypeID::MeshTypeID() : defCtor_(0), ctor_(0)

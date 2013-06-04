@@ -307,7 +307,7 @@ std::string PythonImpl::removeModule(const std::string& id)
   }
 }
 
-std::string PythonImpl::executeAll(const ExecutableLookup& lookup)
+std::string PythonImpl::executeAll(const ExecutableLookup* lookup)
 {
   nec_.executeAll(lookup);
   return "Execution finished.";
