@@ -200,6 +200,11 @@ BOOST_PYTHON_MODULE( interpreter )
 		.def( "write", &PythonStdErr::write );
 }
 
+BOOST_PYTHON_MODULE( SCIRunPythonAPI )
+{
+  std::cerr << "Boost python module SCIRunPythonAPI" << std::endl;
+}
+
 CORE_SINGLETON_IMPLEMENTATION( PythonInterpreter );
 	
 PythonInterpreter::PythonInterpreter() :
@@ -232,13 +237,8 @@ std::cerr << "PythonInterpreter::initialize_eventhandler()" << std::endl;
 
 	// Add the extension modules
 	PyImport_AppendInittab( "interpreter", PyInit_interpreter );
-	for ( auto it = this->private_->modules_.begin(); 
-		it != this->private_->modules_.end(); ++it )
-	{
-std::cerr << "module=" << ( *it ).first.c_str() << std::endl;
-		PyImport_AppendInittab( ( *it ).first.c_str(), ( *it ).second );
-	}
-
+  PyImport_AppendInittab( "SCIRunPythonAPI", BOOST_PP_CAT( PyInit_, SCIRunPythonAPI ) );
+  
 	Py_SetProgramName( const_cast< wchar_t* >( this->private_->program_name_ ) );
 	boost::filesystem::path lib_path( this->private_->program_name_ );
 	lib_path = lib_path.parent_path() / PYTHONPATH;
@@ -292,11 +292,11 @@ std::cerr << "module=" << ( *it ).first.c_str() << std::endl;
   this->private_->initialized_ = true;
 }
 
-//void PythonInterpreter::initialize( wchar_t* program_name, const module_list_type& init_list )
+//void PythonInterpreter::initialize( wchar_t* program_name/*, const module_list_type& init_list*/ )
 //{
 //	std::cout << ( "Initializing Python ..." ) << std::endl;
 //	this->private_->program_name_ = program_name;
-//	this->private_->modules_ = init_list;
+////	this->private_->modules_ = init_list;
 //
 //	PythonInterpreterPrivate::lock_type lock( this->private_->get_mutex() );
 //	//this->start_eventhandler();
