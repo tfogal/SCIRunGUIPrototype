@@ -34,7 +34,13 @@
 #include <Dataflow/Engine/Python/NetworkEditorPythonAPI.h>
 #include <Dataflow/Engine/Python/Share.h>
 
-BOOST_PYTHON_MODULE(SCIRunPythonAPI)
+#ifdef WIN32
+#define API_NAME SCIRunPythonAPI
+#else 
+#define API_NAME libSCIRunPythonAPI
+#endif
+
+BOOST_PYTHON_MODULE(API_NAME)
 {
   using namespace SCIRun;
 

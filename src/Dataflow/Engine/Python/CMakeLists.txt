@@ -61,6 +61,12 @@ IF(WIN32)
     PREFIX ""
     SUFFIX ".pyd"
   )
+#ELSE()
+#  SET_TARGET_PROPERTIES(SCIRunPythonAPI
+#    PROPERTIES
+#    OUTPUT_NAME "SCIRunPythonAPI"
+#    SUFFIX ".so"
+#    )
 ENDIF()
     
 ENDIF(BUILD_SHARED_LIBS)
