@@ -42,6 +42,7 @@
 
 #include <Core/Python/PythonInterpreter.h>
 
+#include <Dataflow/Engine/Python/SCIRunPythonModule.h>
 //#ifdef _MSC_VER
 //#pragma warning( pop )
 //#endif
@@ -198,11 +199,6 @@ BOOST_PYTHON_MODULE( interpreter )
 
 	boost::python::class_< PythonStdErr >( "terminalerr" )
 		.def( "write", &PythonStdErr::write );
-}
-
-BOOST_PYTHON_MODULE( SCIRunPythonAPI )
-{
-  std::cerr << "Boost python module SCIRunPythonAPI" << std::endl;
 }
 
 CORE_SINGLETON_IMPLEMENTATION( PythonInterpreter );
