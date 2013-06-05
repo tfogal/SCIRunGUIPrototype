@@ -49,6 +49,12 @@ ENDIF()
 OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 MARK_AS_ADVANCED(BUILD_SHARED_LIBS)
 
+########################################################################
+# Headless build
+
+OPTION(BUILD_HEADLESS "Build headless version, without Qt" OFF)
+MARK_AS_ADVANCED(BUILD_HEADLESS)
+
 
 ########################################################################
 # Set default CMAKE_BUILD_TYPE
@@ -502,6 +508,7 @@ INCLUDE_DIRECTORIES(
   ${SCIRun5Prototype_BINARY_DIR}/
   ${SCIRun5Prototype_BINARY_DIR}/include
   ${SCIRun5Prototype_SOURCE_DIR}/Externals/eigen
+  # TODO: set up include variable in log4cpp project
   ${SCIRun5Prototype_SOURCE_DIR}/Externals/log4cpp/include
 )
 
@@ -702,7 +709,8 @@ SET_PROPERTY(TARGET Modules_Factory   PROPERTY FOLDER "Modules")
 
 SET_PROPERTY(TARGET Boost_external   PROPERTY FOLDER "Externals")
 SET_PROPERTY(TARGET Spire_external   PROPERTY FOLDER "Externals")
-SET_PROPERTY(TARGET log4cpp PROPERTY FOLDER "Externals")
+#SET_PROPERTY(TARGET log4cpp PROPERTY FOLDER "Externals")
+
 
 IF(BUILD_WITH_PYTHON)
   SET_PROPERTY(TARGET diagram PROPERTY FOLDER "Testing Support")
