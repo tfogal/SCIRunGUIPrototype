@@ -41,4 +41,4 @@ TARGET_LINK_LIBRARIES(Core_Containers_Tests
   gmock
 )
 
-ADD_DEPENDENCIES(Core_Containers Boost_external)
+ADD_DEPENDENCIES(Core_Containers_Tests Boost_external)
